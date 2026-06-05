@@ -1,0 +1,863 @@
+﻿<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>英语阅读助手</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: #f8f9fa; color: #1a1a2e; line-height: 1.7; min-height: 100vh;
+  }
+  .app-container { display: flex; max-width: 1200px; margin: 0 auto; padding: 20px; gap: 24px; }
+  .main-area { flex: 1; min-width: 0; }
+  .sidebar { width: 300px; flex-shrink: 0; }
+  .app-header {
+    max-width: 1200px; margin: 0 auto; padding: 20px 20px 0;
+    display: flex; justify-content: space-between; align-items: center;
+  }
+  .app-header h1 { font-size: 22px; font-weight: 700; color: #1a1a2e; display: flex; align-items: center; gap: 8px; }
+  .app-header h1 span { background: #e8f0fe; color: #1967d2; font-size: 12px; padding: 2px 8px; border-radius: 10px; font-weight: 500; }
+  .config-bar { display: flex; align-items: center; gap: 12px; font-size: 13px; }
+  .config-bar label { color: #5f6368; font-weight: 500; }
+  .config-bar input[type="password"] {
+    width: 220px; padding: 6px 10px; border: 1px solid #dadce0; border-radius: 6px;
+    font-size: 13px; outline: none; transition: border-color .2s;
+  }
+  .config-bar input[type="password"]:focus { border-color: #1967d2; }
+  .config-bar .status-dot {
+    display: inline-block; width: 8px; height: 8px; border-radius: 50%;
+    background: #dadce0; transition: background .3s;
+  }
+  .config-bar .status-dot.ok { background: #34a853; }
+  .config-bar .status-dot.err { background: #ea4335; }
+  .paste-area { margin-bottom: 20px; }
+  .paste-area textarea {
+    width: 100%; min-height: 140px; padding: 16px; border: 2px dashed #dadce0;
+    border-radius: 12px; font-size: 15px; line-height: 1.7; resize: vertical;
+    outline: none; transition: border-color .3s, background .3s;
+    font-family: inherit; background: #fff;
+  }
+  .paste-area textarea:focus { border-color: #1967d2; background: #fff; }
+  .paste-area textarea::placeholder { color: #9aa0a6; }
+  .paste-area .hint { font-size: 13px; color: #5f6368; margin-top: 6px; display: flex; gap: 16px; align-items: center; }
+  .paste-area .hint .btn {
+    padding: 4px 14px; border: 1px solid #dadce0; border-radius: 6px; background: #fff;
+    cursor: pointer; font-size: 13px; color: #3c4043; transition: all .2s;
+  }
+  .paste-area .hint .btn:hover { background: #f1f3f4; border-color: #bdc1c6; }
+  .content-area {
+    background: #fff; border-radius: 12px; padding: 28px 32px; min-height: 200px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.06); line-height: 2; font-size: 16px;
+  }
+  .content-area .word {
+    cursor: pointer; border-bottom: 2px solid transparent; transition: border-color .15s, background .15s;
+    padding: 0 1px; border-radius: 2px; position: relative;
+  }
+  .content-area .word:hover { border-color: #1967d2; background: #e8f0fe; }
+  .content-area .word.cached { border-color: #34a853; }
+  .content-area .empty-placeholder { color: #9aa0a6; text-align: center; padding: 40px 0; font-size: 15px; }
+  .content-area .paragraph { margin-bottom: 16px; }
+  .content-area .paragraph:last-child { margin-bottom: 0; }
+  .content-area .sentence { cursor: default; }
+  .content-area .sentence .word { cursor: pointer; border-bottom-color: #e0e0e0; }
+  .content-area .sentence:hover { background: #fafafa; border-radius: 4px; }
+  .content-area .sentence .word:hover { border-bottom-color: #1967d2; }
+  .tooltip-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 999; display: none; }
+  .tooltip-overlay.active { display: block; }
+  .tooltip {
+    position: fixed; z-index: 1000; background: #fff; border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.15), 0 2px 8px rgba(0,0,0,0.08);
+    padding: 16px 20px; max-width: 400px; min-width: 220px;
+    border: 1px solid #e8eaed; animation: tooltipIn .2s ease;
+    pointer-events: auto;
+  }
+  @keyframes tooltipIn { from { opacity: 0; transform: translateY(6px) scale(0.97); } to { opacity: 1; transform: translateY(0) scale(1); } }
+  .tooltip .word-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .tooltip .word-header .word-text { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+  .tooltip .word-header .phonetic { font-size: 15px; color: #5f6368; font-family: "Times New Roman", serif; }
+  .tooltip .meaning { font-size: 15px; color: #3c4043; margin-bottom: 10px; line-height: 1.6; }
+  .tooltip .translation-block { margin-bottom: 10px; }
+  .tooltip .translation-block .src-text { font-size: 13px; color: #5f6368; margin-bottom: 4px; font-style: italic; }
+  .tooltip .translation-block .tgt-text { font-size: 15px; color: #1a1a2e; line-height: 1.6; }
+  .tooltip .actions { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 6px; padding-top: 10px; border-top: 1px solid #f1f3f4; }
+  .tooltip .actions .btn {
+    padding: 4px 12px; border-radius: 6px; border: 1px solid #dadce0; background: #fff;
+    font-size: 13px; cursor: pointer; transition: all .15s; color: #3c4043;
+  }
+  .tooltip .actions .btn:hover { background: #f1f3f4; }
+  .tooltip .actions .btn.primary { background: #e8f0fe; border-color: #c6dafc; color: #1967d2; }
+  .tooltip .actions .btn.primary:hover { background: #d2e3fc; }
+  .tooltip .loading-spinner { color: #5f6368; font-size: 14px; display: flex; align-items: center; gap: 8px; }
+  .tooltip .loading-spinner::after {
+    content: ''; width: 14px; height: 14px; border: 2px solid #dadce0; border-top-color: #1967d2;
+    border-radius: 50%; animation: spin .6s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .tooltip .error-msg { color: #ea4335; font-size: 14px; }
+  .sidebar h2 { font-size: 16px; font-weight: 600; margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .sidebar h2 .count { font-size: 12px; color: #5f6368; font-weight: 400; }
+  .sidebar .wordbook-actions { display: flex; gap: 6px; margin-bottom: 12px; }
+  .sidebar .wordbook-actions .btn {
+    padding: 4px 10px; border-radius: 6px; border: 1px solid #dadce0; background: #fff;
+    font-size: 12px; cursor: pointer; transition: all .15s; color: #3c4043;
+  }
+  .sidebar .wordbook-actions .btn:hover { background: #f1f3f4; }
+  .sidebar .wordbook-actions .btn.danger { color: #ea4335; border-color: #f8c9c9; }
+  .sidebar .wordbook-actions .btn.danger:hover { background: #fce8e6; }
+  .sidebar .word-list { list-style: none; padding: 0; }
+  .sidebar .word-list li {
+    display: flex; justify-content: space-between; align-items: center;
+    padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: background .15s;
+    font-size: 14px; border: 1px solid transparent; margin-bottom: 2px;
+  }
+  .sidebar .word-list li:hover { background: #f1f3f4; }
+  .sidebar .word-list li .w { font-weight: 600; color: #1a1a2e; }
+  .sidebar .word-list li .m { color: #5f6368; font-size: 13px; max-width: 160px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sidebar .word-list li .del-btn {
+    background: none; border: none; color: #9aa0a6; cursor: pointer; font-size: 16px;
+    padding: 2px 4px; border-radius: 4px; transition: all .15s; line-height: 1;
+  }
+  .sidebar .word-list li .del-btn:hover { color: #ea4335; background: #fce8e6; }
+  .sidebar .empty-wordbook { color: #9aa0a6; font-size: 14px; text-align: center; padding: 24px 0; }
+  .toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
+  .toast {
+    background: #323232; color: #fff; padding: 10px 24px; border-radius: 8px;
+    font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+    animation: toastIn .25s ease, toastOut .25s ease 2.5s forwards; pointer-events: auto;
+  }
+  @keyframes toastIn { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+  @keyframes toastOut { from { opacity: 1; } to { opacity: 0; transform: translateY(-8px); } }
+  @media (max-width: 768px) {
+    .app-container { flex-direction: column; padding: 12px; }
+    .sidebar { width: 100%; }
+    .app-header { flex-direction: column; align-items: stretch; gap: 12px; }
+    .config-bar { flex-wrap: wrap; }
+    .config-bar input[type="password"] { width: 100%; }
+    .content-area { padding: 20px 16px; }
+    .tooltip { max-width: 90vw; min-width: 180px; }
+  }
+  .upload-zone {
+    border: 2px dashed #c6dafc; border-radius: 12px; padding: 20px;
+    text-align: center; cursor: pointer; transition: all .25s;
+    background: #f8fbff; margin-bottom: 16px;
+  }
+  .upload-zone:hover, .upload-zone.dragover { border-color: #1967d2; background: #e8f0fe; }
+  .upload-zone .icon { font-size: 28px; margin-bottom: 6px; }
+  .upload-zone .text { font-size: 14px; color: #5f6368; }
+  .upload-zone .text strong { color: #1967d2; }
+  .upload-zone .formats { font-size: 12px; color: #9aa0a6; margin-top: 4px; }
+  .upload-zone .progress { display: none; margin-top: 10px; }
+  .upload-zone .progress.active { display: block; }
+  .upload-zone .progress-bar {
+    height: 4px; background: #e8eaed; border-radius: 2px; overflow: hidden;
+  }
+  .upload-zone .progress-bar-fill {
+    height: 100%; background: #1967d2; width: 0%; transition: width .3s;
+    border-radius: 2px;
+  }
+  .upload-zone .progress-text { font-size: 12px; color: #5f6368; margin-top: 4px; }
+  .upload-zone .preview-img { max-width: 100%; max-height: 160px; margin-top: 10px; border-radius: 8px; display: none; }  .mode-tabs { display: flex; gap: 4px; background: #f1f3f4; border-radius: 8px; padding: 3px; }
+  .mode-tab {
+    padding: 6px 16px; border: none; border-radius: 6px; background: transparent;
+    font-size: 13px; cursor: pointer; color: #5f6368; transition: all .2s; font-weight: 500;
+  }
+  .mode-tab:hover { color: #1a1a2e; }
+  .mode-tab.active { background: #fff; color: #1967d2; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
+  .main-area .mode-panel { display: none; }
+  .main-area .mode-panel.active { display: block; }</style>
+<script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script></head>
+<body>
+  <header class="app-header">
+    <h1>📖 英语阅读助手 <span>DeepSeek</span></h1>
+    <div class="mode-tabs">
+      <button class="mode-tab active" data-mode="en-read">📖 英文阅读</button>
+      <button class="mode-tab" data-mode="zh-en">🌐 中译英</button>
+    </div>
+    <div class="config-bar">
+      <label for="apiKey">API Key:</label>
+      <input type="password" id="apiKey" placeholder="sk-..." autocomplete="off">
+      <span class="status-dot" id="apiStatus" title="API 状态"></span>
+      <span style="font-size:12px;color:#9aa0a6;" id="modelLabel">deepseek-chat</span>
+    </div>
+  </header>
+  <div class="app-container">
+    <div class="main-area">
+    <div class="mode-panel active" id="panel-en-read">
+      <div class="upload-zone" id="uploadZone">
+        <div class="icon">📂</div>
+        <div class="text">拖拽 <strong>图片</strong>、<strong>TXT</strong>、<strong>DOCX</strong>、<strong>PDF</strong> 到此处，或点击选择文件</div>
+        <div class="formats">也支持 Ctrl+V 直接粘贴截图</div>
+        <div class="progress" id="uploadProgress">
+          <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
+          <div class="progress-text" id="progressText">处理中…</div>
+        </div>
+        <img class="preview-img" id="previewImg">
+      </div>
+      <div class="paste-area">
+        <textarea id="articleInput" placeholder="在此粘贴英文文章…"></textarea>
+        <div class="hint">
+          <span>💡 点击单词查释义 · 双击句子翻译 · 选中段落自动翻译</span>
+          <button class="btn" id="clearBtn">清空</button>
+        </div>
+      </div>
+      <div class="content-area" id="contentArea">
+        <div class="empty-placeholder">👆 粘贴文章后自动渲染</div>
+      </div>
+    </div>
+    <div class="mode-panel" id="panel-zh-en">
+      <div class="paste-area">
+        <textarea id="zhInput" placeholder="在此粘贴中文文章…" style="background:#fff8f0;border-color:#f0dcc0;"></textarea>
+        <div class="hint">
+          <span>🌐 点击中文词查英文 · 双击句子翻译 · 选中段落自动翻译</span>
+          <button class="btn" id="clearZhBtn">清空</button>
+        </div>
+      </div>
+      <div class="content-area" id="zhContentArea">
+        <div class="empty-placeholder">👆 粘贴中文文章后自动渲染</div>
+      </div>
+    </div>
+    </div>  <!-- main-area -->
+    <aside class="sidebar">
+      <h2>📚 生词本 <span class="count" id="wordbookCount">0</span></h2>
+      <div class="wordbook-actions">
+        <button class="btn" id="exportTxtBtn">📄 导出 TXT</button>
+        <button class="btn" id="exportCsvBtn">📊 导出 CSV</button>
+        <button class="btn danger" id="clearWordbookBtn">🗑️ 清空</button>
+      </div>
+      <ul class="word-list" id="wordList">
+        <li class="empty-wordbook">还没有收藏单词</li>
+      </ul>
+    </aside>
+  </div>
+  <div class="tooltip-overlay" id="tooltipOverlay"></div>
+  <div class="tooltip" id="tooltip" style="display:none;"></div>
+  <div class="toast-container" id="toastContainer"></div>
+<script>
+const CONFIG = {
+  API_ENDPOINT: 'https://api.deepseek.com/v1/chat/completions',
+  MODEL: 'deepseek-chat',
+  WORD_CACHE: new Map(),
+  TRANS_CACHE: new Map(),
+  SENTENCE_CACHE: new Map(),
+};
+
+const ZH_CACHE = new Map();
+let currentMode = 'en-read';
+
+const $ = (id) => document.getElementById(id);
+
+function escapeHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
+function showToast(msg) {
+  const container = $('toastContainer');
+  const el = document.createElement('div');
+  el.className = 'toast';
+  el.textContent = msg;
+  container.appendChild(el);
+  setTimeout(() => el.remove(), 2800);
+}
+
+function getApiKey() { const k = $('apiKey').value.trim(); return k || null; }
+
+function updateApiStatus(ok) {
+  const dot = $('apiStatus');
+  dot.className = 'status-dot' + (ok === null ? '' : ok ? ' ok' : ' err');
+}
+
+async function callDeepSeek(messages) {
+  const key = getApiKey();
+  if (!key) { updateApiStatus(false); throw new Error('请先在上方配置 DeepSeek API Key'); }
+  const resp = await fetch(CONFIG.API_ENDPOINT, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+    body: JSON.stringify({ model: CONFIG.MODEL, messages: messages, stream: false, temperature: 0.1 }),
+  });
+  if (!resp.ok) {
+    updateApiStatus(false);
+    const text = await resp.text();
+    throw new Error('API 请求失败 (' + resp.status + '): ' + text.slice(0, 200));
+  }
+  updateApiStatus(true);
+  const data = await resp.json();
+  return data.choices[0].message.content.trim();
+}
+
+// ---- Word Lookup ----
+async function lookupWord(word) {
+  const lower = word.toLowerCase();
+  if (CONFIG.WORD_CACHE.has(lower)) return CONFIG.WORD_CACHE.get(lower);
+  const systemPrompt = 'You are an English dictionary. Given an English word, return its phonetics and Chinese meaning as JSON only, no other text.\n{ "phonetic": "UK phonetic string", "meaning": "Chinese meaning with part of speech and definition" }';
+  const userPrompt = 'Word: "' + word + '"';
+  try {
+    const content = await callDeepSeek([{ role: 'system', content: systemPrompt }, { role: 'user', content: userPrompt }]);
+    const jsonMatch = content.match(/\{[\s\S]*\}/);
+    const result = jsonMatch ? JSON.parse(jsonMatch[0]) : { phonetic: '', meaning: content };
+    const entry = { phonetic: result.phonetic || '', meaning: result.meaning || content };
+    CONFIG.WORD_CACHE.set(lower, entry);
+    return entry;
+  } catch (err) { throw err; }
+}
+
+async function translateText(text) {
+  const trimmed = text.trim();
+  if (!trimmed) return '';
+  if (CONFIG.TRANS_CACHE.has(trimmed)) return CONFIG.TRANS_CACHE.get(trimmed);
+  const systemPrompt = 'Translate the following English text into natural Chinese. Return ONLY the translation, no explanations, no extra text.';
+  try {
+    const result = await callDeepSeek([{ role: 'system', content: systemPrompt }, { role: 'user', content: trimmed }]);
+    CONFIG.TRANS_CACHE.set(trimmed, result);
+    return result;
+  } catch (err) { throw err; }
+}
+
+// ---- Render ----
+function renderArticle(text) {
+  const area = $('contentArea');
+  if (!text.trim()) { area.innerHTML = '<div class="empty-placeholder">👆 粘贴文章后自动渲染</div>'; return; }
+  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
+  const html = paragraphs.map(p => {
+    const sentences = p.match(/[^.!?]+[.!?]+(?=\s+[A-Z]|\s*$)|[^.!?]+[.!?]+\s*$|[^.!?]+$/g) || [p];
+    return '<div class="paragraph">' + sentences.map(s => {
+      const trimmed = s.trim();
+      if (!trimmed) return '';
+      const words = trimmed.match(/[\w\u2019'\-]+|[^\w\u2019'\-]+/g) || [];
+      const spans = words.map(w => {
+        if (/^[\w\u2019'\-]+$/.test(w)) {
+          const lower = w.toLowerCase().replace(/[^a-z0-9']/g, '');
+          const cached = CONFIG.WORD_CACHE.has(lower);
+          return '<span class="word' + (cached ? ' cached' : '') + '" data-word="' + escapeHtml(w) + '">' + escapeHtml(w) + '</span>';
+        }
+        return escapeHtml(w);
+      });
+      return '<span class="sentence" data-sentence="' + escapeHtml(trimmed) + '">' + spans.join('') + '</span>';
+    }).join('') + '</div>';
+  }).join('');
+  area.innerHTML = html;
+}
+
+function renderZhArticle(text) {
+  const area = $('zhContentArea');
+  if (!text.trim()) { area.innerHTML = '<div class="empty-placeholder">👆 粘贴中文文章后自动渲染</div>'; return; }
+  const paragraphs = text.split(/\n\s*\n/).filter(p => p.trim());
+  const html = paragraphs.map(p => {
+    const sentences = p.match(/[^。！？]+[。！？]|$|[^。！？]+$/g) || [p];
+    return '<div class="paragraph">' + sentences.map(s => {
+      const trimmed = s.trim();
+      if (!trimmed) return '';
+      const tokens = trimmed.match(/[\w\u2019'\-]+|[^\w\u2019'\-]/g) || [];
+      const spans = tokens.map(t => {
+        if (/^[\w\u2019'\-]+$/.test(t)) {
+          return '<span class="word" data-word="' + escapeHtml(t) + '">' + escapeHtml(t) + '</span>';
+        }
+        return escapeHtml(t);
+      });
+      return '<span class="sentence" data-sentence="' + escapeHtml(trimmed) + '">' + spans.join('') + '</span>';
+    }).join('') + '</div>';
+  }).join('');
+  area.innerHTML = html;
+}
+
+// ---- Tooltip ----
+const tooltip = $('tooltip');
+const overlay = $('tooltipOverlay');
+function showTooltip(content, x, y) {
+  tooltip.innerHTML = content;
+  tooltip.style.display = 'block';
+  overlay.classList.add('active');
+  const tw = tooltip.offsetWidth, th = tooltip.offsetHeight, pad = 12;
+  let left = x, top = y;
+  if (left + tw + pad > window.innerWidth) left = window.innerWidth - tw - pad;
+  if (left < pad) left = pad;
+  if (top + th + pad > window.innerHeight) { top = top - th - pad; } else { top = top + pad; }
+  if (top < pad) top = pad;
+  tooltip.style.left = left + 'px';
+  tooltip.style.top = top + 'px';
+}
+function hideTooltip() { tooltip.style.display = 'none'; overlay.classList.remove('active'); }
+overlay.addEventListener('click', hideTooltip);
+
+// ---- Wordbook ----
+function getWordbook() { try { return JSON.parse(localStorage.getItem('wordbook') || '[]'); } catch(e) { return []; } }
+function saveWordbook(list) { localStorage.setItem('wordbook', JSON.stringify(list)); }
+function wordbookHas(word) { return getWordbook().some(function(item) { return item.word.toLowerCase() === word.toLowerCase(); }); }
+function wordbookAdd(word, meaning) {
+  const list = getWordbook();
+  if (list.some(function(item) { return item.word.toLowerCase() === word.toLowerCase(); })) return;
+  list.push({ word: word, meaning: meaning, added: Date.now() });
+  saveWordbook(list); renderWordbook();
+}
+function wordbookRemove(word) {
+  saveWordbook(getWordbook().filter(function(item) { return item.word.toLowerCase() !== word.toLowerCase(); }));
+  renderWordbook();
+}
+function wordbookClear() { if (!confirm('确定清空所有生词吗？')) return; saveWordbook([]); renderWordbook(); showToast('生词本已清空'); }
+function renderWordbook() {
+  const list = getWordbook();
+  const ul = $('wordList');
+  $('wordbookCount').textContent = list.length;
+  if (list.length === 0) { ul.innerHTML = '<li class="empty-wordbook">还没有收藏单词</li>'; return; }
+  var items = '';
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var short = item.meaning.replace(/\n.*$/, '').slice(0, 40);
+    items += '<li><span class="w">' + escapeHtml(item.word) + '</span><span class="m">' + escapeHtml(short) + '</span><button class="del-btn" data-word="' + escapeHtml(item.word) + '" title="删除">✕</button></li>';
+  }
+  ul.innerHTML = items;
+  ul.querySelectorAll('.del-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) { e.stopPropagation(); wordbookRemove(btn.dataset.word); showToast('已删除「' + btn.dataset.word + '」'); });
+  });
+  ul.querySelectorAll('li').forEach(function(li) {
+    var wordSpan = li.querySelector('.w');
+    if (!wordSpan) return;
+    li.addEventListener('click', async function(e) {
+      if (e.target.closest('.del-btn')) return;
+      var word = wordSpan.textContent;
+      var r = li.getBoundingClientRect();
+      showTooltip('<div class="loading-spinner">查询 ' + escapeHtml(word) + ' 中...</div>', r.left, r.bottom);
+      try {
+        var result = await lookupWord(word);
+        showTooltip('<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic) + '</span></div><div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>', r.left, r.bottom);
+      } catch (err) { showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', r.left, r.bottom); }
+    });
+  });
+}
+function exportTxt() {
+  var list = getWordbook();
+  if (list.length === 0) { showToast('生词本为空'); return; }
+  var lines = [];
+  for (var i = 0; i < list.length; i++) lines.push(list[i].word + '\t' + list[i].meaning.replace(/\n/g, '; '));
+  downloadBlob(new Blob([lines.join('\n')], {type:'text/plain;charset=utf-8'}), '生词本.txt');
+  showToast('已导出 TXT');
+}
+function exportCsv() {
+  var list = getWordbook();
+  if (list.length === 0) { showToast('生词本为空'); return; }
+  var rows = ['单词,释义'];
+  for (var i = 0; i < list.length; i++) rows.push(list[i].word + ',"' + list[i].meaning.replace(/"/g, '""') + '"');
+  downloadBlob(new Blob(['\uFEFF' + rows.join('\n')], {type:'text/csv;charset=utf-8'}), '生词本.csv');
+  showToast('已导出 CSV（可导入 Anki）');
+}
+function downloadBlob(blob, filename) {
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a'); a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click();
+  document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+
+// ---- Event Handlers ----
+
+// Mode switching
+document.querySelectorAll('.mode-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const mode = tab.dataset.mode;
+    if (mode === currentMode) return;
+    document.querySelectorAll('.mode-tab').forEach(t => t.classList.remove('active'));
+    tab.classList.add('active');
+    document.querySelectorAll('.mode-panel').forEach(p => p.classList.remove('active'));
+    const panel = document.getElementById('panel-' + mode);
+    if (panel) panel.classList.add('active');
+    const header = document.querySelector('.app-header h1');
+    if (mode === 'en-read') {
+      header.innerHTML = '📖 英语阅读助手 <span>DeepSeek</span>';
+    } else {
+      header.innerHTML = '🌐 中译英 <span>DeepSeek</span>';
+    }
+    currentMode = mode;
+  });
+});
+
+// EN: article input
+$('articleInput').addEventListener('input', function() { renderArticle(this.value); });
+$('clearBtn').addEventListener('click', function() { $('articleInput').value = ''; renderArticle(''); showToast('已清空'); });
+
+// EN: word click
+$('contentArea').addEventListener('click', async (e) => {
+  const wordSpan = e.target.closest('.word');
+  if (!wordSpan) return;
+  const raw = wordSpan.dataset.word;
+  if (!raw) return;
+  const word = raw.replace(/^[^a-zA-Z0-9']+|[^a-zA-Z0-9']+$/g, '').toLowerCase();
+  if (!word) return;
+  e.stopPropagation();
+  const rect = wordSpan.getBoundingClientRect();
+  showTooltip('<div class="loading-spinner">查询 ' + escapeHtml(word) + ' 中...</div>', rect.left, rect.bottom);
+  try {
+    const result = await lookupWord(word);
+    const isSaved = wordbookHas(word);
+    showTooltip(
+      '<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic) + '</span></div>' +
+      '<div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>' +
+      '<div class="actions"><button class="btn primary" id="saveWordBtn" data-word="' + escapeHtml(word) + '" data-meaning="' + escapeHtml(result.meaning) + '">' + (isSaved ? '✅ 已收藏' : '📌 收藏') + '</button></div>',
+      rect.left, rect.bottom
+    );
+    wordSpan.classList.add('cached');
+    const saveBtn = tooltip.querySelector('#saveWordBtn');
+    if (saveBtn) {
+      saveBtn.addEventListener('click', (ev) => {
+        ev.stopPropagation();
+        const w = saveBtn.dataset.word, m = saveBtn.dataset.meaning;
+        if (wordbookHas(w)) { showToast('已在生词本中'); return; }
+        wordbookAdd(w, m);
+        saveBtn.textContent = '✅ 已收藏'; saveBtn.classList.add('saved');
+        showToast('已收藏「' + w + '」');
+      });
+    }
+  } catch (err) {
+    const rect2 = wordSpan.getBoundingClientRect();
+    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom);
+  }
+});
+
+// EN: dblclick sentence
+$('contentArea').addEventListener('dblclick', async (e) => {
+  const sentSpan = e.target.closest('.sentence');
+  if (!sentSpan) return;
+  const sentence = sentSpan.textContent.trim();
+  if (!sentence || sentence.split(/\s+/).length < 2) return;
+  e.stopPropagation();
+  const rect = sentSpan.getBoundingClientRect();
+  showTooltip('<div class="loading-spinner">翻译句子中...</div>', rect.left, rect.bottom);
+  try {
+    let translation;
+    if (CONFIG.SENTENCE_CACHE.has(sentence)) {
+      translation = CONFIG.SENTENCE_CACHE.get(sentence);
+    } else {
+      const sysP = 'Translate the following English sentence into natural Chinese. Return ONLY the translation, no explanations.';
+      translation = await callDeepSeek([{ role: 'system', content: sysP }, { role: 'user', content: sentence }]);
+      CONFIG.SENTENCE_CACHE.set(sentence, translation);
+    }
+    showTooltip(
+      '<div class="translation-block"><div class="src-text">📝 ' + escapeHtml(sentence) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>',
+      rect.left, rect.bottom
+    );
+  } catch (err) {
+    const rect2 = sentSpan.getBoundingClientRect();
+    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom);
+  }
+});
+
+// ZH: input
+$('zhInput').addEventListener('input', function() { renderZhArticle(this.value); });
+$('clearZhBtn').addEventListener('click', function() { $('zhInput').value = ''; renderZhArticle(''); showToast('已清空'); });
+
+// ZH: word click
+$('zhContentArea').addEventListener('click', async (e) => {
+  const wordSpan = e.target.closest('.word');
+  if (!wordSpan) return;
+  const raw = wordSpan.dataset.word;
+  if (!raw) return;
+  const word = raw.trim();
+  if (!word) return;
+  e.stopPropagation();
+  const rect = wordSpan.getBoundingClientRect();
+  const isChinese = /[\u4e00-\u9fff]/.test(word);
+  showTooltip('<div class="loading-spinner">查询 ' + escapeHtml(word) + ' 中...</div>', rect.left, rect.bottom);
+  try {
+    let result;
+    if (isChinese) {
+      const cacheKey = 'zh:' + word;
+      if (ZH_CACHE.has(cacheKey)) {
+        result = ZH_CACHE.get(cacheKey);
+      } else {
+        const sysP = 'You are a Chinese-English dictionary. Given a Chinese word/phrase, return its English translation and pronunciation info as JSON only:\n{ "phonetic": "English pronunciation or empty", "meaning": "English translation with part of speech", "examples": ["example sentence 1", "example sentence 2"] }';
+        const resp = await callDeepSeek([{ role: 'system', content: sysP }, { role: 'user', content: word }]);
+        const jm = resp.match(/\{[\s\S]*\}/);
+        result = jm ? JSON.parse(jm[0]) : { phonetic: '', meaning: resp, examples: [] };
+        ZH_CACHE.set(cacheKey, result);
+      }
+      showTooltip(
+        '<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic || '') + '</span></div>' +
+        '<div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>' +
+        (result.examples && result.examples.length > 0
+          ? '<div class="actions" style="border-top:1px solid #f1f3f4;padding-top:8px;margin-top:8px;font-size:13px;color:#5f6368;"><div>📝 例句：</div><ul style="margin:4px 0 0 16px;">' + result.examples.slice(0,2).map(function(e) { return '<li style="font-size:13px;color:#3c4043;margin-bottom:2px;">' + escapeHtml(e) + '</li>'; }).join('') + '</ul></div>'
+          : ''),
+        rect.left, rect.bottom
+      );
+    } else {
+      result = await lookupWord(word);
+      const isSaved = wordbookHas(word);
+      showTooltip(
+        '<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic) + '</span></div>' +
+        '<div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>' +
+        '<div class="actions"><button class="btn primary" id="zhSaveBtn" data-word="' + escapeHtml(word) + '" data-meaning="' + escapeHtml(result.meaning) + '">' + (isSaved ? '✅ 已收藏' : '📌 收藏') + '</button></div>',
+        rect.left, rect.bottom
+      );
+      const saveBtn = tooltip.querySelector('#zhSaveBtn');
+      if (saveBtn) {
+        saveBtn.addEventListener('click', function(ev) {
+          ev.stopPropagation();
+          var w = saveBtn.dataset.word, m = saveBtn.dataset.meaning;
+          if (wordbookHas(w)) { showToast('已在生词本中'); return; }
+          wordbookAdd(w, m);
+          saveBtn.textContent = '✅ 已收藏'; saveBtn.classList.add('saved');
+          showToast('已收藏「' + w + '」');
+        });
+      }
+    }
+    wordSpan.classList.add('cached');
+  } catch (err) {
+    const rect2 = wordSpan.getBoundingClientRect();
+    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom);
+  }
+});
+
+// ZH: dblclick sentence
+$('zhContentArea').addEventListener('dblclick', async (e) => {
+  const sentSpan = e.target.closest('.sentence');
+  if (!sentSpan) return;
+  const sentence = sentSpan.textContent.trim();
+  if (!sentence || sentence.split(/[\s\u4e00-\u9fff]/).length < 2) return;
+  e.stopPropagation();
+  const rect = sentSpan.getBoundingClientRect();
+  showTooltip('<div class="loading-spinner">翻译中...</div>', rect.left, rect.bottom);
+  try {
+    let translation;
+    const key = 'zhsen:' + sentence;
+    if (CONFIG.SENTENCE_CACHE.has(key)) {
+      translation = CONFIG.SENTENCE_CACHE.get(key);
+    } else {
+      translation = await callDeepSeek([{ role: 'system', content: 'Translate the following Chinese into natural English. Return ONLY the English translation, no explanations.' }, { role: 'user', content: sentence }]);
+      CONFIG.SENTENCE_CACHE.set(key, translation);
+    }
+    showTooltip(
+      '<div class="translation-block"><div class="src-text">🌐 ' + escapeHtml(sentence) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>',
+      rect.left, rect.bottom
+    );
+  } catch (err) {
+    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect.left, rect.bottom);
+  }
+});
+
+// Selection translation (shared by EN and ZH)
+let selectionTimeout = null;
+document.addEventListener('mouseup', (e) => {
+  if (tooltip.contains(e.target) || overlay.contains(e.target)) return;
+  if (e.target.closest('textarea')) return;
+  if (selectionTimeout) clearTimeout(selectionTimeout);
+  selectionTimeout = setTimeout(async () => {
+    const sel = window.getSelection();
+    const text = sel.toString().trim();
+    if (!text) return;
+    const inZhArea = sel.anchorNode && sel.anchorNode.closest && sel.anchorNode.closest('#zhContentArea');
+    if (!sel.anchorNode || !sel.anchorNode.closest || (!sel.anchorNode.closest('#contentArea') && !inZhArea)) return;
+    const wordCount = text.split(/\s+/).length;
+    if (wordCount < 2) return;
+    const range = sel.getRangeAt(0);
+    const rect = range.getBoundingClientRect();
+    showTooltip('<div class="loading-spinner">翻译中...</div>', rect.left, rect.bottom + 8);
+    try {
+      let translation;
+      if (inZhArea) {
+        const ck = 'zhsel:' + text;
+        if (CONFIG.SENTENCE_CACHE.has(ck)) { translation = CONFIG.SENTENCE_CACHE.get(ck); }
+        else {
+          translation = await callDeepSeek([{ role: 'system', content: 'Translate the following Chinese into natural English. Return ONLY the translation, no explanations.' }, { role: 'user', content: text }]);
+          CONFIG.SENTENCE_CACHE.set(ck, translation);
+        }
+      } else {
+        translation = await translateText(text);
+      }
+      const displayText = text.length > 90 ? text.slice(0, 90) + '\u2026' : text;
+      showTooltip(
+        '<div class="translation-block"><div class="src-text">' + (inZhArea ? '🌐 ' : '📝 ') + escapeHtml(displayText) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>',
+        rect.left, rect.bottom + 8
+      );
+    } catch (err) {
+      const rect2 = range.getBoundingClientRect();
+      showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom + 8);
+    }
+  }, 300);
+});
+
+// ---- File Upload & OCR ----
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+const uploadZone = $('uploadZone');
+const progressEl = $('uploadProgress');
+const progressFill = $('progressFill');
+const progressText = $('progressText');
+const previewImg = $('previewImg');
+
+uploadZone.addEventListener('click', () => {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.txt,.docx,.pdf,image/*';
+  input.onchange = () => { if (input.files[0]) handleFile(input.files[0]); };
+  input.click();
+});
+
+uploadZone.addEventListener('dragover', (e) => { e.preventDefault(); uploadZone.classList.add('dragover'); });
+uploadZone.addEventListener('dragleave', () => { uploadZone.classList.remove('dragover'); });
+uploadZone.addEventListener('drop', (e) => {
+  e.preventDefault();
+  uploadZone.classList.remove('dragover');
+  if (e.dataTransfer.files[0]) handleFile(e.dataTransfer.files[0]);
+});
+
+document.addEventListener('paste', (e) => {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  for (const item of items) {
+    if (item.type.startsWith('image/')) {
+      const blob = item.getAsFile();
+      if (blob) handleImageBlob(blob);
+      return;
+    }
+  }
+});
+
+function setProgress(pct, text) {
+  progressEl.classList.add('active');
+  progressFill.style.width = pct + '%';
+  progressText.textContent = text;
+}
+
+function hideProgress() {
+  progressEl.classList.remove('active');
+  previewImg.style.display = 'none';
+  previewImg.src = '';
+}
+
+function handleFile(file) {
+  const name = file.name.toLowerCase();
+  if (name.endsWith('.txt')) handleTxt(file);
+  else if (name.endsWith('.docx')) handleDocx(file);
+  else if (name.endsWith('.pdf')) handlePdf(file);
+  else if (file.type.startsWith('image/')) handleImageFile(file);
+  else showToast('不支持的文件格式：' + file.name);
+}
+
+function handleImageFile(file) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src = e.target.result;
+    previewImg.style.display = 'block';
+    ocrImage(e.target.result);
+  };
+  reader.readAsDataURL(file);
+}
+
+function handleImageBlob(blob) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    previewImg.src = e.target.result;
+    previewImg.style.display = 'block';
+    ocrImage(e.target.result);
+  };
+  reader.readAsDataURL(blob);
+}
+
+async function ocrImage(dataUrl) {
+  setProgress(10, '加载 OCR 引擎…');
+  try {
+    const result = await Tesseract.recognize(
+      dataUrl, 'eng',
+      { logger: (m) => { if (m.status === 'recognizing text') { setProgress(10 + Math.round(m.progress * 80), '识别中…'); } } }
+    );
+    setProgress(95, '识别完成');
+    const text = result.data.text;
+    if (text.trim()) {
+      $('articleInput').value = text;
+      renderArticle(text);
+      showToast('✅ 图片文字识别完成');
+    } else {
+      showToast('未识别到文字');
+    }
+    setTimeout(hideProgress, 1500);
+  } catch (err) {
+    hideProgress();
+    showToast('OCR 识别失败: ' + err.message);
+  }
+}
+
+async function handleTxt(file) {
+  setProgress(30, '读取 TXT…');
+  const text = await file.text();
+  // Switch to en-read mode
+  if (currentMode !== 'en-read') {
+    document.querySelector('.mode-tab[data-mode="en-read"]').click();
+  }
+  $('articleInput').value = text;
+  renderArticle(text);
+  setProgress(100, '✅ 已加载');
+  setTimeout(hideProgress, 1000);
+}
+
+async function handleDocx(file) {
+  setProgress(20, '解析 DOCX…');
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const result = await mammoth.extractRawText({ arrayBuffer: arrayBuffer });
+    const text = result.value;
+    if (text.trim()) {
+      if (currentMode !== 'en-read') { document.querySelector('.mode-tab[data-mode="en-read"]').click(); }
+      $('articleInput').value = text;
+      renderArticle(text);
+      setProgress(100, '✅ 已加载');
+    } else { showToast('DOCX 文件内容为空'); }
+  } catch (err) { showToast('DOCX 解析失败: ' + err.message); }
+  setTimeout(hideProgress, 1000);
+}
+
+async function handlePdf(file) {
+  setProgress(10, '读取 PDF…');
+  try {
+    const arrayBuffer = await file.arrayBuffer();
+    const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+    let fullText = '';
+    for (let i = 1; i <= pdf.numPages; i++) {
+      setProgress(10 + Math.round((i / pdf.numPages) * 80), '解析第 ' + i + '/' + pdf.numPages + ' 页…');
+      const page = await pdf.getPage(i);
+      const content = await page.getTextContent();
+      const pageText = content.items.map(function(item) { return item.str; }).join(' ');
+      fullText += pageText + '\n\n';
+    }
+    if (fullText.trim()) {
+      if (currentMode !== 'en-read') { document.querySelector('.mode-tab[data-mode="en-read"]').click(); }
+      $('articleInput').value = fullText;
+      renderArticle(fullText);
+      setProgress(100, '✅ 已加载 ' + pdf.numPages + ' 页');
+    } else { showToast('PDF 中未提取到文字'); }
+  } catch (err) { showToast('PDF 解析失败: ' + err.message); }
+  setTimeout(hideProgress, 1500);
+}
+
+// ---- API Key Persistence ----
+(function() { var saved = localStorage.getItem('deepseek_api_key'); if (saved) { $('apiKey').value = saved; updateApiStatus(true); } })();
+$('apiKey').addEventListener('input', function() {
+  var key = $('apiKey').value.trim();
+  if (key) { localStorage.setItem('deepseek_api_key', key); updateApiStatus(key.startsWith('sk-') ? true : false); }
+  else { localStorage.removeItem('deepseek_api_key'); updateApiStatus(null); }
+});
+
+// ---- Init ----
+$('exportTxtBtn').addEventListener('click', exportTxt);
+$('exportCsvBtn').addEventListener('click', exportCsv);
+$('clearWordbookBtn').addEventListener('click', wordbookClear);
+renderWordbook();
+renderArticle('');
+renderZhArticle('');
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
