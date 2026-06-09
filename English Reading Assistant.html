@@ -121,6 +121,32 @@
   }
   .sidebar .word-list li .del-btn:hover { color: #ea4335; background: #fce8e6; }
   .sidebar .empty-wordbook { color: #9aa0a6; font-size: 14px; text-align: center; padding: 24px 0; }
+  .sidebar-section { margin-bottom: 24px; }
+  .sidebar-section + .sidebar-section { padding-top: 20px; border-top: 1px solid #e8eaed; }
+  .sidebar .history-actions { display: flex; gap: 6px; margin-bottom: 12px; }
+  .sidebar .history-actions .btn {
+    padding: 4px 10px; border-radius: 6px; border: 1px solid #dadce0; background: #fff;
+    font-size: 12px; cursor: pointer; transition: all .15s; color: #3c4043;
+  }
+  .sidebar .history-actions .btn:hover { background: #f1f3f4; }
+  .sidebar .history-actions .btn.danger { color: #ea4335; border-color: #f8c9c9; }
+  .sidebar .history-actions .btn.danger:hover { background: #fce8e6; }
+  .sidebar .history-list { list-style: none; padding: 0; max-height: 360px; overflow-y: auto; }
+  .sidebar .history-list li {
+    display: grid; grid-template-columns: 1fr auto; gap: 6px; align-items: start;
+    padding: 9px 10px; border-radius: 8px; cursor: pointer; transition: background .15s;
+    font-size: 13px; border: 1px solid transparent; margin-bottom: 4px;
+  }
+  .sidebar .history-list li:hover { background: #f1f3f4; }
+  .sidebar .history-list li .history-title { font-weight: 600; color: #1a1a2e; line-height: 1.35; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .sidebar .history-list li .history-meta { grid-column: 1 / -1; color: #9aa0a6; font-size: 12px; line-height: 1.35; }
+  .sidebar .history-list li .history-preview { grid-column: 1 / -1; color: #5f6368; font-size: 12px; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+  .sidebar .history-list li .del-btn {
+    background: none; border: none; color: #9aa0a6; cursor: pointer; font-size: 16px;
+    padding: 0 4px; border-radius: 4px; transition: all .15s; line-height: 1;
+  }
+  .sidebar .history-list li .del-btn:hover { color: #ea4335; background: #fce8e6; }
+  .sidebar .empty-history { color: #9aa0a6; font-size: 14px; text-align: center; padding: 24px 0; }
   .toast-container { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); z-index: 2000; display: flex; flex-direction: column; gap: 8px; align-items: center; pointer-events: none; }
   .toast {
     background: #323232; color: #fff; padding: 10px 24px; border-radius: 8px;
@@ -166,7 +192,340 @@
   .mode-tab:hover { color: #1a1a2e; }
   .mode-tab.active { background: #fff; color: #1967d2; box-shadow: 0 1px 3px rgba(0,0,0,0.1); }
   .main-area .mode-panel { display: none; }
-  .main-area .mode-panel.active { display: block; }</style>
+  .main-area .mode-panel.active { display: block; }
+
+  :root {
+    --bg: #eef3f1;
+    --surface: #ffffff;
+    --surface-soft: #f7faf8;
+    --surface-warm: #fffaf2;
+    --ink: #17201c;
+    --muted: #68756f;
+    --line: #dce5e0;
+    --line-strong: #c8d5cf;
+    --accent: #2563eb;
+    --accent-soft: #e8f0ff;
+    --accent-strong: #1d4ed8;
+    --green: #1f8a5b;
+    --red: #dc2626;
+    --shadow-sm: 0 1px 2px rgba(23, 32, 28, .05);
+    --shadow-md: 0 12px 32px rgba(23, 32, 28, .09);
+  }
+
+  body {
+    background:
+      linear-gradient(180deg, #f7faf8 0, var(--bg) 260px, #edf2f0 100%);
+    color: var(--ink);
+    letter-spacing: 0;
+  }
+
+  button, input, textarea { font: inherit; }
+  button:focus-visible, input:focus-visible, textarea:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, .18);
+    outline-offset: 2px;
+  }
+
+  .app-header {
+    max-width: 1280px;
+    padding: 22px 24px 10px;
+    gap: 16px;
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: rgba(247, 250, 248, .92);
+    border-bottom: 1px solid rgba(220, 229, 224, .78);
+    backdrop-filter: blur(16px);
+  }
+  .app-header h1 {
+    color: var(--ink);
+    font-size: 24px;
+    letter-spacing: 0;
+    white-space: nowrap;
+  }
+  .app-header h1 span {
+    background: #e9f6ef;
+    color: var(--green);
+    border: 1px solid #cce8d8;
+    border-radius: 999px;
+    padding: 3px 9px;
+  }
+
+  .app-container {
+    max-width: 1280px;
+    padding: 18px 24px 34px;
+    gap: 22px;
+    align-items: flex-start;
+  }
+  .main-area {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .sidebar {
+    width: 320px;
+    position: sticky;
+    top: 86px;
+    align-self: flex-start;
+    background: rgba(255, 255, 255, .82);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px;
+    box-shadow: var(--shadow-sm);
+    backdrop-filter: blur(12px);
+  }
+
+  .mode-tabs {
+    background: #e8eeeb;
+    border: 1px solid #d7e2dd;
+    border-radius: 8px;
+    padding: 4px;
+    flex-shrink: 0;
+  }
+  .mode-tab {
+    min-height: 34px;
+    padding: 7px 14px;
+    border-radius: 6px;
+    color: #53615b;
+  }
+  .mode-tab:hover { background: rgba(255,255,255,.5); color: var(--ink); }
+  .mode-tab.active {
+    color: var(--accent-strong);
+    box-shadow: 0 1px 2px rgba(23, 32, 28, .08);
+  }
+
+  .config-bar {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 8px 10px;
+    box-shadow: var(--shadow-sm);
+  }
+  .config-bar label { color: var(--muted); }
+  .config-bar input[type="password"] {
+    height: 34px;
+    border-color: var(--line);
+    background: var(--surface-soft);
+    border-radius: 6px;
+  }
+  .config-bar input[type="password"]:focus {
+    border-color: var(--accent);
+    background: #fff;
+  }
+
+  .upload-zone,
+  .paste-area textarea,
+  .content-area {
+    border-radius: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  .upload-zone {
+    border: 1px dashed var(--line-strong);
+    background: rgba(255, 255, 255, .78);
+    padding: 22px;
+  }
+  .upload-zone:hover,
+  .upload-zone.dragover {
+    border-color: var(--accent);
+    background: #f4f8ff;
+    box-shadow: 0 8px 24px rgba(37, 99, 235, .08);
+  }
+  .upload-zone .icon { font-size: 30px; }
+  .upload-zone .text { color: #425049; }
+  .upload-zone .text strong { color: var(--accent-strong); }
+  .upload-zone .formats,
+  .upload-zone .progress-text { color: var(--muted); }
+  .upload-zone .progress-bar { background: #dce5e0; }
+  .upload-zone .progress-bar-fill { background: var(--accent); }
+
+  .paste-area { margin-bottom: 16px; }
+  .paste-area textarea {
+    min-height: 150px;
+    border: 1px solid var(--line);
+    background: rgba(255, 255, 255, .92);
+    color: var(--ink);
+    transition: border-color .2s, box-shadow .2s, background .2s;
+  }
+  .paste-area textarea:focus {
+    border-color: var(--accent);
+    background: #fff;
+    box-shadow: 0 0 0 4px rgba(37, 99, 235, .08);
+  }
+  #zhInput {
+    background: var(--surface-warm) !important;
+    border-color: #ead9ba !important;
+  }
+  #zhInput:focus {
+    border-color: #d3972e !important;
+    box-shadow: 0 0 0 4px rgba(211, 151, 46, .12);
+  }
+  .paste-area .hint {
+    justify-content: space-between;
+    color: var(--muted);
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 9px;
+  }
+
+  .paste-area .hint .btn,
+  .tooltip .actions .btn,
+  .sidebar .wordbook-actions .btn,
+  .sidebar .history-actions .btn {
+    min-height: 30px;
+    border-radius: 6px;
+    border-color: var(--line);
+    background: var(--surface);
+    color: #3c4943;
+  }
+  .paste-area .hint .btn:hover,
+  .tooltip .actions .btn:hover,
+  .sidebar .wordbook-actions .btn:hover,
+  .sidebar .history-actions .btn:hover {
+    background: #eef3f1;
+    border-color: var(--line-strong);
+  }
+  .tooltip .actions .btn.primary {
+    background: var(--accent-soft);
+    border-color: #bfceff;
+    color: var(--accent-strong);
+  }
+
+  .content-area {
+    border: 1px solid var(--line);
+    padding: 30px 34px;
+    background: rgba(255, 255, 255, .94);
+    color: #17201c;
+    line-height: 2.05;
+    box-shadow: var(--shadow-md);
+  }
+  .content-area .paragraph { margin-bottom: 18px; }
+  .content-area .sentence {
+    border-radius: 5px;
+    transition: background .15s;
+  }
+  .content-area .sentence:hover { background: #f4f7f5; }
+  .content-area .sentence .word { border-bottom-color: #d7dfdb; }
+  .content-area .word:hover {
+    border-color: var(--accent);
+    background: var(--accent-soft);
+  }
+  .content-area .word.cached {
+    border-color: #74c69d;
+    background: rgba(233, 246, 239, .45);
+  }
+  .content-area .empty-placeholder,
+  .sidebar .empty-wordbook,
+  .sidebar .empty-history {
+    color: #8a9691;
+  }
+
+  .sidebar h2 {
+    margin-bottom: 12px;
+    color: var(--ink);
+    font-size: 15px;
+  }
+  .sidebar h2 .count {
+    display: inline-grid;
+    min-width: 22px;
+    height: 22px;
+    place-items: center;
+    background: #eef3f1;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    color: #53615b;
+  }
+  .sidebar-section { margin-bottom: 20px; }
+  .sidebar-section + .sidebar-section {
+    padding-top: 18px;
+    border-top-color: var(--line);
+  }
+  .sidebar .wordbook-actions,
+  .sidebar .history-actions {
+    flex-wrap: wrap;
+  }
+  .sidebar .wordbook-actions .btn.danger,
+  .sidebar .history-actions .btn.danger {
+    color: var(--red);
+    border-color: #f3c4c4;
+  }
+  .sidebar .wordbook-actions .btn.danger:hover,
+  .sidebar .history-actions .btn.danger:hover {
+    background: #fff1f1;
+  }
+  .sidebar .word-list li,
+  .sidebar .history-list li {
+    border-radius: 6px;
+    border-color: transparent;
+  }
+  .sidebar .word-list li:hover,
+  .sidebar .history-list li:hover {
+    background: var(--surface-soft);
+    border-color: var(--line);
+  }
+  .sidebar .word-list li .w,
+  .sidebar .history-list li .history-title { color: var(--ink); }
+  .sidebar .word-list li .m,
+  .sidebar .history-list li .history-preview { color: var(--muted); }
+  .sidebar .history-list {
+    max-height: 420px;
+    padding-right: 3px;
+    scrollbar-width: thin;
+    scrollbar-color: #b7c5bf transparent;
+  }
+
+  .tooltip {
+    border-color: var(--line);
+    border-radius: 8px;
+    box-shadow: 0 18px 46px rgba(23, 32, 28, .18), 0 4px 12px rgba(23, 32, 28, .08);
+  }
+  .tooltip .word-header .word-text,
+  .tooltip .translation-block .tgt-text { color: var(--ink); }
+  .tooltip .meaning { color: #35413b; }
+  .tooltip .translation-block .src-text,
+  .tooltip .word-header .phonetic { color: var(--muted); }
+  .tooltip .actions { border-top-color: var(--line); }
+  .tooltip .loading-spinner::after { border-top-color: var(--accent); }
+  .tooltip .error-msg { color: var(--red); }
+
+  .toast {
+    background: #17201c;
+    border-radius: 8px;
+    box-shadow: 0 12px 28px rgba(23, 32, 28, .22);
+  }
+
+  @media (max-width: 980px) {
+    .app-header {
+      position: static;
+      align-items: stretch;
+      flex-wrap: wrap;
+    }
+    .app-header h1 { width: 100%; }
+    .app-container { flex-direction: column; }
+    .sidebar {
+      position: static;
+      width: 100%;
+    }
+  }
+  @media (max-width: 768px) {
+    .app-header { padding: 16px 14px 8px; }
+    .app-header h1 {
+      font-size: 21px;
+      white-space: normal;
+    }
+    .app-container {
+      padding: 12px 14px 24px;
+      gap: 16px;
+    }
+    .mode-tabs,
+    .config-bar { width: 100%; }
+    .mode-tab { flex: 1; padding-inline: 8px; }
+    .content-area {
+      padding: 22px 18px;
+      line-height: 1.95;
+    }
+    .upload-zone { padding: 18px 14px; }
+    .paste-area textarea { min-height: 132px; }
+  }
+</style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script></head>
@@ -200,7 +559,7 @@
       <div class="paste-area">
         <textarea id="articleInput" placeholder="在此粘贴英文文章…"></textarea>
         <div class="hint">
-          <span>💡 点击单词查释义 · 双击句子翻译 · 选中段落自动翻译</span>
+          <span>💡 点击单词查释义 · 双击任意单词翻译整句 · 选中段落自动翻译</span>
           <button class="btn" id="clearBtn">清空</button>
         </div>
       </div>
@@ -212,7 +571,7 @@
       <div class="paste-area">
         <textarea id="zhInput" placeholder="在此粘贴中文文章…" style="background:#fff8f0;border-color:#f0dcc0;"></textarea>
         <div class="hint">
-          <span>🌐 点击中文词查英文 · 双击句子翻译 · 选中段落自动翻译</span>
+          <span>🌐 双击词语查英文 · 三击词语翻译整句 · 选中段落自动翻译</span>
           <button class="btn" id="clearZhBtn">清空</button>
         </div>
       </div>
@@ -222,15 +581,26 @@
     </div>
     </div>  <!-- main-area -->
     <aside class="sidebar">
-      <h2>📚 生词本 <span class="count" id="wordbookCount">0</span></h2>
-      <div class="wordbook-actions">
-        <button class="btn" id="exportTxtBtn">📄 导出 TXT</button>
-        <button class="btn" id="exportCsvBtn">📊 导出 CSV</button>
-        <button class="btn danger" id="clearWordbookBtn">🗑️ 清空</button>
-      </div>
-      <ul class="word-list" id="wordList">
-        <li class="empty-wordbook">还没有收藏单词</li>
-      </ul>
+      <section class="sidebar-section">
+        <h2>📚 生词本 <span class="count" id="wordbookCount">0</span></h2>
+        <div class="wordbook-actions">
+          <button class="btn" id="exportTxtBtn">📄 导出 TXT</button>
+          <button class="btn" id="exportCsvBtn">📊 导出 CSV</button>
+          <button class="btn danger" id="clearWordbookBtn">🗑️ 清空</button>
+        </div>
+        <ul class="word-list" id="wordList">
+          <li class="empty-wordbook">还没有收藏单词</li>
+        </ul>
+      </section>
+      <section class="sidebar-section">
+        <h2>🕘 历史记录 <span class="count" id="historyCount">0</span></h2>
+        <div class="history-actions">
+          <button class="btn danger" id="clearHistoryBtn">🗑️ 清空历史</button>
+        </div>
+        <ul class="history-list" id="historyList">
+          <li class="empty-history">还没有阅读历史</li>
+        </ul>
+      </section>
     </aside>
   </div>
   <div class="tooltip-overlay" id="tooltipOverlay"></div>
@@ -384,6 +754,51 @@ function showTooltip(content, x, y) {
 function hideTooltip() { tooltip.style.display = 'none'; overlay.classList.remove('active'); }
 overlay.addEventListener('click', hideTooltip);
 
+function closestElement(target, selector) {
+  const el = target && (target.nodeType === 1 ? target : target.parentElement);
+  return el ? el.closest(selector) : null;
+}
+
+function getEventRect(e, fallbackEl) {
+  const wordSpan = closestElement(e.target, '.word');
+  if (wordSpan) return wordSpan.getBoundingClientRect();
+  return fallbackEl.getBoundingClientRect();
+}
+
+function nodeInside(node, selector) {
+  const el = node && (node.nodeType === 1 ? node : node.parentElement);
+  return !!(el && el.closest(selector));
+}
+
+async function translateSentenceFromEvent(e, areaId, options) {
+  const sentSpan = closestElement(e.target, '.sentence');
+  if (!sentSpan || !sentSpan.closest('#' + areaId)) return;
+  const sentence = sentSpan.dataset.sentence || sentSpan.textContent.trim();
+  if (!sentence) return;
+  e.preventDefault();
+  e.stopPropagation();
+  if (wordClickTimer) { clearTimeout(wordClickTimer); wordClickTimer = null; }
+  const rect = getEventRect(e, sentSpan);
+  showTooltip('<div class="loading-spinner">' + options.loadingText + '</div>', rect.left, rect.bottom);
+  try {
+    let translation;
+    const cacheKey = options.cachePrefix + sentence;
+    if (CONFIG.SENTENCE_CACHE.has(cacheKey)) {
+      translation = CONFIG.SENTENCE_CACHE.get(cacheKey);
+    } else {
+      translation = await callDeepSeek([{ role: 'system', content: options.prompt }, { role: 'user', content: sentence }]);
+      CONFIG.SENTENCE_CACHE.set(cacheKey, translation);
+    }
+    showTooltip(
+      '<div class="translation-block"><div class="src-text">' + options.icon + ' ' + escapeHtml(sentence) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>',
+      rect.left, rect.bottom
+    );
+  } catch (err) {
+    const rect2 = getEventRect(e, sentSpan);
+    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom);
+  }
+}
+
 // ---- Wordbook ----
 function getWordbook() { try { return JSON.parse(localStorage.getItem('wordbook') || '[]'); } catch(e) { return []; } }
 function saveWordbook(list) { localStorage.setItem('wordbook', JSON.stringify(list)); }
@@ -452,7 +867,128 @@ function downloadBlob(blob, filename) {
   document.body.removeChild(a); URL.revokeObjectURL(url);
 }
 
+// ---- Reading History ----
+let historySaveTimer = null;
+let activeHistoryId = null;
+let isLoadingHistory = false;
+
+function getHistory() {
+  try { return JSON.parse(localStorage.getItem('reading_history') || '[]'); } catch(e) { return []; }
+}
+
+function saveHistory(list) {
+  localStorage.setItem('reading_history', JSON.stringify(list.slice(0, 30)));
+}
+
+function getHistoryTitle(text, mode) {
+  const firstLine = text.trim().split(/\n/).map(function(line) { return line.trim(); }).filter(Boolean)[0] || '';
+  const fallback = mode === 'zh-en' ? '中文文章' : '英文文章';
+  return (firstLine || fallback).slice(0, 34);
+}
+
+function formatHistoryTime(ts) {
+  const d = new Date(ts);
+  const pad = function(n) { return String(n).padStart(2, '0'); };
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate()) + ' ' + pad(d.getHours()) + ':' + pad(d.getMinutes());
+}
+
+function upsertHistory(mode, text) {
+  const trimmed = text.trim();
+  if (isLoadingHistory || trimmed.length < 10) return;
+  const now = Date.now();
+  let list = getHistory();
+  let item = null;
+  if (activeHistoryId) item = list.find(function(entry) { return entry.id === activeHistoryId; });
+  if (!item) {
+    const duplicate = list.find(function(entry) { return entry.mode === mode && entry.text.trim() === trimmed; });
+    if (duplicate) item = duplicate;
+  }
+  if (item) {
+    item.mode = mode;
+    item.text = text;
+    item.title = getHistoryTitle(text, mode);
+    item.updated = now;
+    activeHistoryId = item.id;
+  } else {
+    activeHistoryId = 'hist_' + now + '_' + Math.random().toString(36).slice(2, 8);
+    item = { id: activeHistoryId, mode: mode, title: getHistoryTitle(text, mode), text: text, created: now, updated: now };
+    list.unshift(item);
+  }
+  list = list.filter(function(entry) { return entry.id !== item.id; });
+  list.unshift(item);
+  saveHistory(list);
+  renderHistory();
+}
+
+function scheduleHistorySave(mode, text) {
+  if (historySaveTimer) clearTimeout(historySaveTimer);
+  historySaveTimer = setTimeout(function() { upsertHistory(mode, text); }, 800);
+}
+
+function loadHistoryItem(id) {
+  const item = getHistory().find(function(entry) { return entry.id === id; });
+  if (!item) return;
+  isLoadingHistory = true;
+  activeHistoryId = item.id;
+  if (currentMode !== item.mode) {
+    const tab = document.querySelector('.mode-tab[data-mode="' + item.mode + '"]');
+    if (tab) tab.click();
+  }
+  if (item.mode === 'zh-en') {
+    $('zhInput').value = item.text;
+    renderZhArticle(item.text);
+  } else {
+    $('articleInput').value = item.text;
+    renderArticle(item.text);
+  }
+  isLoadingHistory = false;
+  showToast('已打开历史记录');
+}
+
+function removeHistoryItem(id) {
+  saveHistory(getHistory().filter(function(entry) { return entry.id !== id; }));
+  if (activeHistoryId === id) activeHistoryId = null;
+  renderHistory();
+}
+
+function clearHistory() {
+  if (!confirm('确定清空所有历史记录吗？')) return;
+  saveHistory([]);
+  activeHistoryId = null;
+  renderHistory();
+  showToast('历史记录已清空');
+}
+
+function renderHistory() {
+  const list = getHistory();
+  const ul = $('historyList');
+  $('historyCount').textContent = list.length;
+  if (list.length === 0) { ul.innerHTML = '<li class="empty-history">还没有阅读历史</li>'; return; }
+  var items = '';
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var modeLabel = item.mode === 'zh-en' ? '中译英' : '英文阅读';
+    var preview = item.text.replace(/\s+/g, ' ').trim().slice(0, 90);
+    items += '<li data-id="' + escapeHtml(item.id) + '"><div class="history-title">' + escapeHtml(item.title) + '</div><button class="del-btn" data-id="' + escapeHtml(item.id) + '" title="删除">✕</button><div class="history-meta">' + modeLabel + ' · ' + formatHistoryTime(item.updated || item.created) + '</div><div class="history-preview">' + escapeHtml(preview) + '</div></li>';
+  }
+  ul.innerHTML = items;
+  ul.querySelectorAll('.del-btn').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      removeHistoryItem(btn.dataset.id);
+      showToast('已删除历史记录');
+    });
+  });
+  ul.querySelectorAll('li[data-id]').forEach(function(li) {
+    li.addEventListener('click', function(e) {
+      if (e.target.closest('.del-btn')) return;
+      loadHistoryItem(li.dataset.id);
+    });
+  });
+}
+
 // ---- Event Handlers ----
+let wordClickTimer = null;
 
 // Mode switching
 document.querySelectorAll('.mode-tab').forEach(tab => {
@@ -471,22 +1007,34 @@ document.querySelectorAll('.mode-tab').forEach(tab => {
       header.innerHTML = '🌐 中译英 <span>DeepSeek</span>';
     }
     currentMode = mode;
+    if (!isLoadingHistory) activeHistoryId = null;
   });
 });
 
 // EN: article input
-$('articleInput').addEventListener('input', function() { renderArticle(this.value); });
-$('clearBtn').addEventListener('click', function() { $('articleInput').value = ''; renderArticle(''); showToast('已清空'); });
+$('articleInput').addEventListener('input', function() {
+  renderArticle(this.value);
+  scheduleHistorySave('en-read', this.value);
+});
+$('clearBtn').addEventListener('click', function() {
+  $('articleInput').value = '';
+  activeHistoryId = null;
+  renderArticle('');
+  showToast('已清空');
+});
 
 // EN: word click
 $('contentArea').addEventListener('click', async (e) => {
-  const wordSpan = e.target.closest('.word');
+  const wordSpan = closestElement(e.target, '.word');
   if (!wordSpan) return;
   const raw = wordSpan.dataset.word;
   if (!raw) return;
   const word = raw.replace(/^[^a-zA-Z0-9']+|[^a-zA-Z0-9']+$/g, '').toLowerCase();
   if (!word) return;
   e.stopPropagation();
+  if (wordClickTimer) clearTimeout(wordClickTimer);
+  wordClickTimer = setTimeout(async () => {
+  wordClickTimer = null;
   const rect = wordSpan.getBoundingClientRect();
   showTooltip('<div class="loading-spinner">查询 ' + escapeHtml(word) + ' 中...</div>', rect.left, rect.bottom);
   try {
@@ -514,50 +1062,32 @@ $('contentArea').addEventListener('click', async (e) => {
     const rect2 = wordSpan.getBoundingClientRect();
     showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom);
   }
+  }, 350);
 });
 
 // EN: dblclick sentence
 $('contentArea').addEventListener('dblclick', async (e) => {
-  const sentSpan = e.target.closest('.sentence');
-  if (!sentSpan) return;
-  const sentence = sentSpan.textContent.trim();
-  if (!sentence || sentence.split(/\s+/).length < 2) return;
-  e.stopPropagation();
-  const rect = sentSpan.getBoundingClientRect();
-  showTooltip('<div class="loading-spinner">翻译句子中...</div>', rect.left, rect.bottom);
-  try {
-    let translation;
-    if (CONFIG.SENTENCE_CACHE.has(sentence)) {
-      translation = CONFIG.SENTENCE_CACHE.get(sentence);
-    } else {
-      const sysP = 'Translate the following English sentence into natural Chinese. Return ONLY the translation, no explanations.';
-      translation = await callDeepSeek([{ role: 'system', content: sysP }, { role: 'user', content: sentence }]);
-      CONFIG.SENTENCE_CACHE.set(sentence, translation);
-    }
-    showTooltip(
-      '<div class="translation-block"><div class="src-text">📝 ' + escapeHtml(sentence) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>',
-      rect.left, rect.bottom
-    );
-  } catch (err) {
-    const rect2 = sentSpan.getBoundingClientRect();
-    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom);
-  }
+  await translateSentenceFromEvent(e, 'contentArea', {
+    cachePrefix: 'ensen:',
+    icon: '📝',
+    loadingText: '翻译句子中...',
+    prompt: 'Translate the following English sentence into natural Chinese. Return ONLY the translation, no explanations.'
+  });
 });
 
 // ZH: input
-$('zhInput').addEventListener('input', function() { renderZhArticle(this.value); });
-$('clearZhBtn').addEventListener('click', function() { $('zhInput').value = ''; renderZhArticle(''); showToast('已清空'); });
+$('zhInput').addEventListener('input', function() {
+  renderZhArticle(this.value);
+  scheduleHistorySave('zh-en', this.value);
+});
+$('clearZhBtn').addEventListener('click', function() {
+  $('zhInput').value = '';
+  activeHistoryId = null;
+  renderZhArticle('');
+  showToast('已清空');
+});
 
-// ZH: word click
-$('zhContentArea').addEventListener('click', async (e) => {
-  const wordSpan = e.target.closest('.word');
-  if (!wordSpan) return;
-  const raw = wordSpan.dataset.word;
-  if (!raw) return;
-  const word = raw.trim();
-  if (!word) return;
-  e.stopPropagation();
-  const rect = wordSpan.getBoundingClientRect();
+async function showZhWordLookup(word, rect) {
   const isChinese = /[\u4e00-\u9fff]/.test(word);
   showTooltip('<div class="loading-spinner">查询 ' + escapeHtml(word) + ' 中...</div>', rect.left, rect.bottom);
   try {
@@ -602,38 +1132,72 @@ $('zhContentArea').addEventListener('click', async (e) => {
         });
       }
     }
+  } catch (err) {
+    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect.left, rect.bottom);
+  }
+}
+
+function getZhLookupTextFromSelection() {
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return '';
+  if (!nodeInside(sel.anchorNode, '#zhContentArea') && !nodeInside(sel.focusNode, '#zhContentArea')) return '';
+  return sel.toString().replace(/^[\s，。！？、；：“”‘’（）《》【】]+|[\s，。！？、；：“”‘’（）《》【】]+$/g, '').trim();
+}
+
+// ZH: word click
+$('zhContentArea').addEventListener('click', async (e) => {
+  if (e.detail === 3) {
+    if (wordClickTimer) { clearTimeout(wordClickTimer); wordClickTimer = null; }
+    return;
+  }
+  const wordSpan = closestElement(e.target, '.word');
+  if (!wordSpan) return;
+  const raw = wordSpan.dataset.word;
+  if (!raw) return;
+  const word = raw.trim();
+  if (!word) return;
+  e.stopPropagation();
+  if (wordClickTimer) clearTimeout(wordClickTimer);
+  wordClickTimer = setTimeout(async () => {
+  wordClickTimer = null;
+  const rect = wordSpan.getBoundingClientRect();
+  try {
+    await showZhWordLookup(word, rect);
     wordSpan.classList.add('cached');
   } catch (err) {
     const rect2 = wordSpan.getBoundingClientRect();
     showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom);
   }
+  }, e.detail === 2 ? 220 : 350);
 });
 
-// ZH: dblclick sentence
+// ZH: double-click word/phrase
 $('zhContentArea').addEventListener('dblclick', async (e) => {
-  const sentSpan = e.target.closest('.sentence');
-  if (!sentSpan) return;
-  const sentence = sentSpan.textContent.trim();
-  if (!sentence || sentence.split(/[\s\u4e00-\u9fff]/).length < 2) return;
+  e.preventDefault();
   e.stopPropagation();
-  const rect = sentSpan.getBoundingClientRect();
-  showTooltip('<div class="loading-spinner">翻译中...</div>', rect.left, rect.bottom);
-  try {
-    let translation;
-    const key = 'zhsen:' + sentence;
-    if (CONFIG.SENTENCE_CACHE.has(key)) {
-      translation = CONFIG.SENTENCE_CACHE.get(key);
-    } else {
-      translation = await callDeepSeek([{ role: 'system', content: 'Translate the following Chinese into natural English. Return ONLY the English translation, no explanations.' }, { role: 'user', content: sentence }]);
-      CONFIG.SENTENCE_CACHE.set(key, translation);
-    }
-    showTooltip(
-      '<div class="translation-block"><div class="src-text">🌐 ' + escapeHtml(sentence) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>',
-      rect.left, rect.bottom
-    );
-  } catch (err) {
-    showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect.left, rect.bottom);
-  }
+  if (wordClickTimer) clearTimeout(wordClickTimer);
+  wordClickTimer = setTimeout(async () => {
+    wordClickTimer = null;
+    const wordSpan = closestElement(e.target, '.word');
+    const selected = getZhLookupTextFromSelection();
+    const raw = selected || (wordSpan && wordSpan.dataset.word) || '';
+    const word = raw.replace(/^[\s，。！？、；：“”‘’（）《》【】]+|[\s，。！？、；：“”‘’（）《》【】]+$/g, '').trim();
+    if (!word) return;
+    const rect = wordSpan ? wordSpan.getBoundingClientRect() : getEventRect(e, closestElement(e.target, '.sentence') || $('zhContentArea'));
+    await showZhWordLookup(word, rect);
+    if (wordSpan) wordSpan.classList.add('cached');
+  }, 260);
+});
+
+// ZH: triple-click sentence
+$('zhContentArea').addEventListener('click', async (e) => {
+  if (e.detail !== 3) return;
+  await translateSentenceFromEvent(e, 'zhContentArea', {
+    cachePrefix: 'zhsen:',
+    icon: '🌐',
+    loadingText: '翻译中...',
+    prompt: 'Translate the following Chinese into natural English. Return ONLY the English translation, no explanations.'
+  });
 });
 
 // Selection translation (shared by EN and ZH)
@@ -767,6 +1331,7 @@ async function ocrImage(dataUrl) {
     if (text.trim()) {
       $('articleInput').value = text;
       renderArticle(text);
+      upsertHistory('en-read', text);
       showToast('✅ 图片文字识别完成');
     } else {
       showToast('未识别到文字');
@@ -787,6 +1352,7 @@ async function handleTxt(file) {
   }
   $('articleInput').value = text;
   renderArticle(text);
+  upsertHistory('en-read', text);
   setProgress(100, '✅ 已加载');
   setTimeout(hideProgress, 1000);
 }
@@ -801,6 +1367,7 @@ async function handleDocx(file) {
       if (currentMode !== 'en-read') { document.querySelector('.mode-tab[data-mode="en-read"]').click(); }
       $('articleInput').value = text;
       renderArticle(text);
+      upsertHistory('en-read', text);
       setProgress(100, '✅ 已加载');
     } else { showToast('DOCX 文件内容为空'); }
   } catch (err) { showToast('DOCX 解析失败: ' + err.message); }
@@ -824,6 +1391,7 @@ async function handlePdf(file) {
       if (currentMode !== 'en-read') { document.querySelector('.mode-tab[data-mode="en-read"]').click(); }
       $('articleInput').value = fullText;
       renderArticle(fullText);
+      upsertHistory('en-read', fullText);
       setProgress(100, '✅ 已加载 ' + pdf.numPages + ' 页');
     } else { showToast('PDF 中未提取到文字'); }
   } catch (err) { showToast('PDF 解析失败: ' + err.message); }
@@ -842,7 +1410,9 @@ $('apiKey').addEventListener('input', function() {
 $('exportTxtBtn').addEventListener('click', exportTxt);
 $('exportCsvBtn').addEventListener('click', exportCsv);
 $('clearWordbookBtn').addEventListener('click', wordbookClear);
+$('clearHistoryBtn').addEventListener('click', clearHistory);
 renderWordbook();
+renderHistory();
 renderArticle('');
 renderZhArticle('');
 </script>
