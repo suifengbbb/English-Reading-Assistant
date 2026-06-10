@@ -525,16 +525,1122 @@
     .upload-zone { padding: 18px 14px; }
     .paste-area textarea { min-height: 132px; }
   }
+  /* UI/UX Pro redesign layer */
+  :root {
+    --pro-bg: #f4f1ea;
+    --pro-bg-2: #edf6f3;
+    --pro-panel: #fffdf8;
+    --pro-panel-2: #f8fbff;
+    --pro-ink: #17211d;
+    --pro-muted: #66746d;
+    --pro-faint: #8d9993;
+    --pro-line: #d9ded7;
+    --pro-line-strong: #bcc8c0;
+    --pro-blue: #2458d3;
+    --pro-blue-soft: #e8efff;
+    --pro-green: #217c58;
+    --pro-green-soft: #e5f3ec;
+    --pro-amber: #a85e14;
+    --pro-amber-soft: #fff1d7;
+    --pro-red: #c93636;
+    --pro-shadow: 0 18px 50px rgba(37, 43, 38, .12);
+    --pro-shadow-soft: 0 8px 22px rgba(37, 43, 38, .07);
+  }
+
+  html { background: var(--pro-bg); }
+  body {
+    min-height: 100vh;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.68), rgba(255,255,255,0) 280px),
+      linear-gradient(135deg, #f6efe2 0%, #eef7f3 48%, #f7f7fb 100%);
+    color: var(--pro-ink);
+    font-size: 15px;
+  }
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+      linear-gradient(rgba(23,33,29,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(23,33,29,.035) 1px, transparent 1px);
+    background-size: 44px 44px;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,.5), transparent 68%);
+  }
+
+  .app-header {
+    max-width: 1360px;
+    padding: 18px 24px;
+    display: grid;
+    grid-template-columns: minmax(260px, 1fr) auto minmax(280px, auto);
+    gap: 18px;
+    background: rgba(255, 253, 248, .88);
+    border: 1px solid rgba(217, 222, 215, .9);
+    border-top: 0;
+    border-radius: 0 0 8px 8px;
+    box-shadow: var(--pro-shadow-soft);
+  }
+  .app-header h1 {
+    align-items: center;
+    gap: 10px;
+    font-size: 22px;
+    letter-spacing: 0;
+  }
+  .app-header h1::before {
+    content: "";
+    width: 10px;
+    height: 34px;
+    border-radius: 999px;
+    background: linear-gradient(180deg, var(--pro-blue), var(--pro-green));
+    box-shadow: 0 0 0 4px rgba(36, 88, 211, .08);
+  }
+  .app-header h1 span {
+    background: var(--pro-green-soft);
+    color: var(--pro-green);
+    border-color: #bfdfcf;
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .06em;
+  }
+
+  .mode-tabs {
+    min-width: 260px;
+    background: #ece8df;
+    border: 1px solid #ddd7cb;
+    border-radius: 8px;
+    padding: 4px;
+  }
+  .mode-tab {
+    min-width: 120px;
+    min-height: 38px;
+    border-radius: 6px;
+    color: #5e625e;
+    font-weight: 700;
+  }
+  .mode-tab:hover { background: rgba(255,255,255,.58); color: var(--pro-ink); }
+  .mode-tab.active {
+    background: var(--pro-panel);
+    color: var(--pro-blue);
+    box-shadow: 0 1px 0 rgba(255,255,255,.9), 0 6px 14px rgba(37,43,38,.08);
+  }
+
+  .config-bar {
+    justify-self: end;
+    width: min(100%, 390px);
+    background: #fbfaf6;
+    border: 1px solid var(--pro-line);
+    border-radius: 8px;
+    padding: 7px 9px;
+  }
+  .config-bar label {
+    color: var(--pro-muted);
+    font-size: 12px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .config-bar input[type="password"] {
+    height: 36px;
+    min-width: 0;
+    flex: 1;
+    background: #fff;
+    border: 1px solid var(--pro-line);
+  }
+  #modelLabel {
+    color: var(--pro-faint) !important;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .app-container {
+    max-width: 1360px;
+    grid-template-columns: minmax(0, 1fr) 340px;
+    padding: 24px;
+    gap: 24px;
+  }
+  .main-area { gap: 18px; }
+  .mode-panel.active {
+    display: grid;
+    gap: 16px;
+  }
+
+  .upload-zone {
+    display: grid;
+    grid-template-columns: 44px minmax(0, 1fr);
+    column-gap: 14px;
+    align-items: center;
+    text-align: left;
+    min-height: 104px;
+    border: 1px dashed #b5c5bd;
+    background: rgba(255,253,248,.86);
+    border-radius: 8px;
+    padding: 18px;
+  }
+  .upload-zone:hover,
+  .upload-zone.dragover {
+    background: #f5f9ff;
+    border-color: var(--pro-blue);
+    box-shadow: var(--pro-shadow-soft);
+  }
+  .upload-zone .icon {
+    width: 44px;
+    height: 44px;
+    display: grid;
+    place-items: center;
+    background: var(--pro-blue-soft);
+    border: 1px solid #cbd8ff;
+    border-radius: 8px;
+    font-size: 22px;
+  }
+  .upload-zone .text {
+    color: var(--pro-ink);
+    font-weight: 700;
+    line-height: 1.45;
+  }
+  .upload-zone .text strong { color: var(--pro-blue); }
+  .upload-zone .formats {
+    grid-column: 2;
+    color: var(--pro-muted);
+  }
+  .upload-zone .progress,
+  .upload-zone .preview-img { grid-column: 1 / -1; }
+  .upload-zone .progress-bar { height: 6px; background: #e1e5df; }
+  .upload-zone .progress-bar-fill { background: linear-gradient(90deg, var(--pro-blue), var(--pro-green)); }
+
+  .paste-area {
+    display: grid;
+    gap: 10px;
+    margin-bottom: 0;
+  }
+  .paste-area textarea {
+    min-height: 168px;
+    border: 1px solid var(--pro-line);
+    background: rgba(255,253,248,.94);
+    border-radius: 8px;
+    padding: 18px 20px;
+    color: var(--pro-ink);
+    box-shadow: var(--pro-shadow-soft);
+  }
+  .paste-area textarea:focus {
+    border-color: var(--pro-blue);
+    box-shadow: 0 0 0 4px rgba(36,88,211,.1), var(--pro-shadow-soft);
+  }
+  #zhInput {
+    background: #fffaf0 !important;
+    border-color: #e7c884 !important;
+  }
+  #zhInput:focus {
+    border-color: var(--pro-amber) !important;
+    box-shadow: 0 0 0 4px rgba(168,94,20,.12), var(--pro-shadow-soft);
+  }
+  .paste-area .hint {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    color: var(--pro-muted);
+    font-size: 13px;
+    margin-top: 0;
+  }
+
+  .paste-area .hint .btn,
+  .tooltip .actions .btn,
+  .sidebar .wordbook-actions .btn,
+  .sidebar .history-actions .btn {
+    min-height: 34px;
+    border: 1px solid var(--pro-line);
+    border-radius: 6px;
+    background: #fffdf8;
+    color: #35423b;
+    font-weight: 700;
+  }
+  .paste-area .hint .btn:hover,
+  .tooltip .actions .btn:hover,
+  .sidebar .wordbook-actions .btn:hover,
+  .sidebar .history-actions .btn:hover {
+    background: #f0f5f2;
+    border-color: var(--pro-line-strong);
+  }
+
+  .content-area {
+    position: relative;
+    min-height: 360px;
+    border: 1px solid var(--pro-line);
+    border-radius: 8px;
+    background: rgba(255,253,248,.97);
+    padding: 34px 40px;
+    box-shadow: var(--pro-shadow);
+    font-size: 17px;
+    line-height: 2.12;
+  }
+  .content-area::before {
+    content: "Reading Canvas";
+    display: block;
+    margin-bottom: 18px;
+    color: var(--pro-faint);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  #zhContentArea::before { content: "Translation Canvas"; }
+  .content-area .empty-placeholder {
+    display: grid;
+    place-items: center;
+    min-height: 210px;
+    color: var(--pro-faint);
+    border: 1px dashed #d7ddd6;
+    border-radius: 8px;
+    background: #faf8f1;
+  }
+  .content-area .paragraph { margin-bottom: 20px; }
+  .content-area .sentence {
+    border-radius: 4px;
+    transition: background .14s, box-shadow .14s;
+  }
+  .content-area .sentence:hover {
+    background: #f4f7f5;
+    box-shadow: 0 0 0 3px #f4f7f5;
+  }
+  .content-area .word {
+    border-bottom: 2px solid #d6ddd8;
+    border-radius: 3px;
+  }
+  .content-area .word:hover {
+    color: #163f9d;
+    border-color: var(--pro-blue);
+    background: var(--pro-blue-soft);
+  }
+  .content-area .word.cached {
+    border-color: #65aa86;
+    background: var(--pro-green-soft);
+  }
+
+  .sidebar {
+    width: 340px;
+    top: 98px;
+    padding: 16px;
+    background: rgba(255,253,248,.9);
+    border: 1px solid var(--pro-line);
+    border-radius: 8px;
+    box-shadow: var(--pro-shadow-soft);
+  }
+  .sidebar h2 {
+    color: var(--pro-ink);
+    font-size: 14px;
+    letter-spacing: .02em;
+  }
+  .sidebar h2 .count {
+    min-width: 24px;
+    height: 24px;
+    background: var(--pro-blue-soft);
+    border-color: #ccd8ff;
+    color: var(--pro-blue);
+    font-weight: 800;
+  }
+  .sidebar-section + .sidebar-section {
+    border-top: 1px solid var(--pro-line);
+  }
+  .sidebar .wordbook-actions,
+  .sidebar .history-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+  }
+  .sidebar .wordbook-actions .btn.danger,
+  .sidebar .history-actions .btn.danger {
+    color: var(--pro-red);
+    border-color: #edc8c8;
+  }
+  .sidebar .history-actions .btn.danger { grid-column: 1 / -1; }
+  .sidebar .word-list li,
+  .sidebar .history-list li {
+    border-radius: 6px;
+    border: 1px solid transparent;
+    padding: 10px;
+  }
+  .sidebar .word-list li:hover,
+  .sidebar .history-list li:hover {
+    background: #f5f8f5;
+    border-color: var(--pro-line);
+  }
+  .sidebar .word-list li .w,
+  .sidebar .history-list li .history-title { color: var(--pro-ink); }
+  .sidebar .word-list li .m,
+  .sidebar .history-list li .history-preview,
+  .sidebar .history-list li .history-meta { color: var(--pro-muted); }
+  .sidebar .empty-wordbook,
+  .sidebar .empty-history {
+    color: var(--pro-faint);
+    background: #faf8f1;
+    border: 1px dashed #d7ddd6 !important;
+  }
+
+  .tooltip {
+    border: 1px solid var(--pro-line);
+    border-radius: 8px;
+    background: #fffdf8;
+    box-shadow: 0 24px 60px rgba(37,43,38,.2);
+  }
+  .tooltip .word-header .word-text,
+  .tooltip .translation-block .tgt-text { color: var(--pro-ink); }
+  .tooltip .word-header .phonetic,
+  .tooltip .translation-block .src-text { color: var(--pro-muted); }
+  .tooltip .actions { border-top-color: var(--pro-line); }
+  .tooltip .actions .btn.primary {
+    background: var(--pro-blue-soft);
+    border-color: #c9d7ff;
+    color: var(--pro-blue);
+  }
+  .tooltip .loading-spinner::after { border-top-color: var(--pro-blue); }
+  .tooltip .error-msg { color: var(--pro-red); }
+  .toast {
+    background: #17211d;
+    border: 1px solid rgba(255,255,255,.12);
+  }
+
+  @media (max-width: 1080px) {
+    .app-header {
+      grid-template-columns: 1fr;
+      position: static;
+    }
+    .config-bar {
+      justify-self: stretch;
+      width: 100%;
+    }
+    .app-container {
+      display: flex;
+      flex-direction: column;
+    }
+    .sidebar {
+      position: static;
+      width: 100%;
+    }
+  }
+  @media (max-width: 720px) {
+    .app-header { padding: 14px; }
+    .app-header h1 { font-size: 20px; white-space: normal; }
+    .mode-tabs { width: 100%; min-width: 0; }
+    .mode-tab { min-width: 0; flex: 1; padding-inline: 8px; }
+    .config-bar { flex-wrap: wrap; }
+    .config-bar input[type="password"] { width: 100%; flex-basis: 100%; }
+    .app-container { padding: 14px; }
+    .upload-zone {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+    .upload-zone .icon {
+      margin: 0 auto 8px;
+    }
+    .upload-zone .formats { grid-column: 1; }
+    .paste-area .hint { grid-template-columns: 1fr; }
+    .paste-area .hint .btn { width: 100%; }
+    .content-area {
+      min-height: 300px;
+      padding: 24px 18px;
+      font-size: 16px;
+    }
+    .sidebar .wordbook-actions { grid-template-columns: 1fr; }
+  }
+
+  /* Frontend Design v2: crisp study dashboard */
+  :root {
+    --fd-bg: #f7f8fb;
+    --fd-surface: #ffffff;
+    --fd-surface-tint: #f2fbf8;
+    --fd-ink: #111827;
+    --fd-text: #273241;
+    --fd-muted: #6b7280;
+    --fd-line: #e4e7ec;
+    --fd-line-strong: #cfd6df;
+    --fd-teal: #0f766e;
+    --fd-teal-soft: #dff7f2;
+    --fd-blue: #3157d5;
+    --fd-blue-soft: #e9efff;
+    --fd-coral: #d95b43;
+    --fd-coral-soft: #fff0ec;
+    --fd-yellow: #b7791f;
+    --fd-yellow-soft: #fff7dd;
+    --fd-shadow: 0 18px 42px rgba(17, 24, 39, .10);
+    --fd-shadow-soft: 0 8px 22px rgba(17, 24, 39, .07);
+  }
+
+  body {
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.96), rgba(255,255,255,.62) 310px, rgba(247,248,251,.96)),
+      radial-gradient(circle at 12% 0%, rgba(15,118,110,.12), transparent 32%),
+      radial-gradient(circle at 88% 12%, rgba(217,91,67,.12), transparent 30%),
+      var(--fd-bg);
+    color: var(--fd-text);
+  }
+  body::before {
+    background-image: linear-gradient(90deg, rgba(17,24,39,.04) 1px, transparent 1px);
+    background-size: 72px 72px;
+    mask-image: linear-gradient(180deg, rgba(0,0,0,.32), transparent 62%);
+  }
+
+  .app-header {
+    max-width: 1440px;
+    grid-template-columns: minmax(250px, 1fr) minmax(260px, auto) minmax(320px, auto);
+    padding: 16px 24px;
+    background: rgba(255,255,255,.88);
+    border-color: rgba(228,231,236,.95);
+    box-shadow: 0 10px 30px rgba(17,24,39,.08);
+  }
+  .app-header h1 {
+    color: var(--fd-ink);
+    font-size: 21px;
+  }
+  .app-header h1::before {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    background:
+      linear-gradient(135deg, var(--fd-teal), var(--fd-blue));
+    box-shadow: 0 10px 22px rgba(49,87,213,.18);
+  }
+  .app-header h1 span {
+    background: var(--fd-blue-soft);
+    border-color: #cbd8ff;
+    color: var(--fd-blue);
+  }
+
+  .mode-tabs {
+    background: #f1f5f9;
+    border-color: #dde5ee;
+    box-shadow: inset 0 0 0 1px rgba(255,255,255,.7);
+  }
+  .mode-tab {
+    color: #536173;
+    font-size: 13px;
+  }
+  .mode-tab.active {
+    background: var(--fd-surface);
+    color: var(--fd-teal);
+    box-shadow: 0 8px 18px rgba(17,24,39,.09);
+  }
+
+  .config-bar {
+    background: #ffffff;
+    border-color: var(--fd-line);
+    box-shadow: 0 6px 16px rgba(17,24,39,.06);
+  }
+  .config-bar label { color: var(--fd-muted); }
+  .config-bar input[type="password"] {
+    background: #f8fafc;
+    border-color: var(--fd-line);
+  }
+  .config-bar input[type="password"]:focus {
+    border-color: var(--fd-blue);
+    box-shadow: 0 0 0 4px rgba(49,87,213,.1);
+  }
+  #modelLabel { color: var(--fd-muted) !important; }
+
+  .app-container {
+    max-width: 1440px;
+    grid-template-columns: minmax(0, 1fr) 360px;
+    gap: 22px;
+  }
+  .main-area { gap: 14px; }
+  .mode-panel.active { gap: 14px; }
+
+  .upload-zone {
+    min-height: 96px;
+    grid-template-columns: 48px minmax(0, 1fr);
+    background: rgba(255,255,255,.9);
+    border: 1px solid var(--fd-line);
+    box-shadow: var(--fd-shadow-soft);
+  }
+  .upload-zone:hover,
+  .upload-zone.dragover {
+    background: #fbffff;
+    border-color: #87d6ca;
+    box-shadow: 0 16px 34px rgba(15,118,110,.14);
+  }
+  .upload-zone .icon {
+    width: 48px;
+    height: 48px;
+    background: var(--fd-teal-soft);
+    border-color: #b9e9df;
+  }
+  .upload-zone .text {
+    color: var(--fd-ink);
+    font-size: 15px;
+  }
+  .upload-zone .text strong { color: var(--fd-teal); }
+  .upload-zone .formats,
+  .upload-zone .progress-text { color: var(--fd-muted); }
+  .upload-zone .progress-bar { background: #e6eaef; }
+  .upload-zone .progress-bar-fill {
+    background: linear-gradient(90deg, var(--fd-teal), var(--fd-blue), var(--fd-coral));
+  }
+
+  .paste-area {
+    padding: 14px;
+    background: rgba(255,255,255,.72);
+    border: 1px solid rgba(228,231,236,.9);
+    border-radius: 8px;
+    box-shadow: 0 8px 24px rgba(17,24,39,.06);
+  }
+  .paste-area textarea {
+    min-height: 154px;
+    background: #ffffff;
+    border-color: var(--fd-line);
+    color: var(--fd-text);
+    box-shadow: none;
+  }
+  .paste-area textarea:focus {
+    border-color: var(--fd-teal);
+    box-shadow: 0 0 0 4px rgba(15,118,110,.1);
+  }
+  #zhInput {
+    background: #fffdf3 !important;
+    border-color: #f0d886 !important;
+  }
+  #zhInput:focus {
+    border-color: var(--fd-yellow) !important;
+    box-shadow: 0 0 0 4px rgba(183,121,31,.12);
+  }
+  .paste-area .hint {
+    color: var(--fd-muted);
+    font-size: 12px;
+  }
+
+  .paste-area .hint .btn,
+  .tooltip .actions .btn,
+  .sidebar .wordbook-actions .btn,
+  .sidebar .history-actions .btn {
+    background: #ffffff;
+    border-color: var(--fd-line);
+    color: #233142;
+    box-shadow: 0 1px 0 rgba(17,24,39,.04);
+  }
+  .paste-area .hint .btn:hover,
+  .tooltip .actions .btn:hover,
+  .sidebar .wordbook-actions .btn:hover,
+  .sidebar .history-actions .btn:hover {
+    background: #f7fafc;
+    border-color: var(--fd-line-strong);
+  }
+
+  .content-area {
+    min-height: 390px;
+    background:
+      linear-gradient(180deg, rgba(255,255,255,.98), rgba(252,253,255,.98)),
+      var(--fd-surface);
+    border-color: var(--fd-line);
+    box-shadow: var(--fd-shadow);
+    color: var(--fd-text);
+    font-size: 17px;
+    line-height: 2.04;
+  }
+  .content-area::before {
+    color: var(--fd-teal);
+    letter-spacing: .14em;
+  }
+  .content-area .empty-placeholder {
+    min-height: 230px;
+    background:
+      linear-gradient(135deg, #f9fbff, #f2fbf8);
+    border-color: #dbe7e4;
+    color: var(--fd-muted);
+  }
+  .content-area .sentence:hover {
+    background: #eefaf7;
+    box-shadow: 0 0 0 3px #eefaf7;
+  }
+  .content-area .word { border-bottom-color: #d3dae3; }
+  .content-area .word:hover {
+    color: #0b5f59;
+    border-color: var(--fd-teal);
+    background: var(--fd-teal-soft);
+  }
+  .content-area .word.cached {
+    border-color: var(--fd-coral);
+    background: var(--fd-coral-soft);
+  }
+
+  .sidebar {
+    width: 360px;
+    background: rgba(255,255,255,.86);
+    border-color: var(--fd-line);
+    box-shadow: var(--fd-shadow-soft);
+  }
+  .sidebar h2 {
+    color: var(--fd-ink);
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .sidebar h2 .count {
+    background: var(--fd-teal-soft);
+    border-color: #b9e9df;
+    color: var(--fd-teal);
+  }
+  .sidebar-section + .sidebar-section { border-top-color: var(--fd-line); }
+  .sidebar .wordbook-actions,
+  .sidebar .history-actions {
+    gap: 7px;
+  }
+  .sidebar .wordbook-actions .btn.danger,
+  .sidebar .history-actions .btn.danger {
+    background: #fffafa;
+    color: var(--fd-coral);
+    border-color: #f2c7bd;
+  }
+  .sidebar .word-list li,
+  .sidebar .history-list li {
+    background: rgba(255,255,255,.64);
+  }
+  .sidebar .word-list li:hover,
+  .sidebar .history-list li:hover {
+    background: var(--fd-surface-tint);
+    border-color: #cfe5df;
+  }
+  .sidebar .word-list li .w,
+  .sidebar .history-list li .history-title { color: var(--fd-ink); }
+  .sidebar .word-list li .m,
+  .sidebar .history-list li .history-preview,
+  .sidebar .history-list li .history-meta { color: var(--fd-muted); }
+  .sidebar .empty-wordbook,
+  .sidebar .empty-history {
+    background: #f8fafc;
+    border-color: var(--fd-line) !important;
+    color: var(--fd-muted);
+  }
+
+  .tooltip {
+    background: #ffffff;
+    border-color: var(--fd-line);
+    box-shadow: 0 26px 64px rgba(17,24,39,.22);
+  }
+  .tooltip .word-header .word-text,
+  .tooltip .translation-block .tgt-text { color: var(--fd-ink); }
+  .tooltip .word-header .phonetic,
+  .tooltip .translation-block .src-text { color: var(--fd-muted); }
+  .tooltip .actions { border-top-color: var(--fd-line); }
+  .tooltip .actions .btn.primary {
+    background: var(--fd-teal-soft);
+    border-color: #b9e9df;
+    color: var(--fd-teal);
+  }
+  .tooltip .loading-spinner::after { border-top-color: var(--fd-teal); }
+  .tooltip .error-msg { color: var(--fd-coral); }
+  .toast { background: var(--fd-ink); }
+
+  @media (max-width: 1080px) {
+    .app-header { grid-template-columns: 1fr; }
+    .app-container { display: flex; }
+    .sidebar { width: 100%; }
+  }
+  @media (max-width: 720px) {
+    .app-header { padding: 12px; }
+    .app-header h1::before {
+      width: 32px;
+      height: 32px;
+    }
+    .app-container { padding: 12px; }
+    .upload-zone { grid-template-columns: 1fr; }
+    .paste-area { padding: 10px; }
+    .content-area {
+      min-height: 320px;
+      padding: 22px 16px;
+      font-size: 16px;
+    }
+  }
+
+  /* Frontend Design: left AI tutor panel */
+  .app-container {
+    display: grid;
+    grid-template-columns: 360px minmax(0, 1fr) 340px;
+    align-items: start;
+    padding-left: 4px;
+  }
+  .ai-panel {
+    position: sticky;
+    top: 96px;
+    width: 360px;
+    height: calc(100vh - 120px);
+    max-height: calc(100vh - 120px);
+    min-height: 620px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    background: rgba(255,255,255,.9);
+    border: 1px solid var(--fd-line);
+    border-radius: 8px;
+    box-shadow: var(--fd-shadow-soft);
+  }
+  .ai-panel-header {
+    min-height: 132px;
+    padding: 20px 22px;
+    border-bottom: 1px solid var(--fd-line);
+    background: linear-gradient(135deg, rgba(223,247,242,.9), rgba(233,239,255,.9));
+  }
+  .ai-panel-kicker {
+    color: var(--fd-teal);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+  .ai-panel-title {
+    margin-top: 10px;
+    color: var(--fd-ink);
+    font-size: 26px;
+    font-weight: 800;
+    line-height: 1.18;
+  }
+  .ai-panel-subtitle {
+    margin-top: 8px;
+    color: var(--fd-muted);
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .ai-quick-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 7px;
+    padding: 12px;
+    border-bottom: 1px solid var(--fd-line);
+    background: rgba(248,250,252,.74);
+  }
+  .ai-chip {
+    min-height: 34px;
+    padding: 7px 10px;
+    border: 1px solid var(--fd-line);
+    border-radius: 6px;
+    background: #fff;
+    color: #233142;
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 750;
+    text-align: left;
+    transition: background .15s, border-color .15s, transform .15s;
+  }
+  .ai-chip:hover {
+    background: var(--fd-surface-tint);
+    border-color: #b9e9df;
+    transform: translateY(-1px);
+  }
+  .ai-history-section {
+    border-bottom: 1px solid var(--fd-line);
+    background: rgba(255,255,255,.72);
+  }
+  .ai-history-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    padding: 11px 12px 8px;
+  }
+  .ai-history-title {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: var(--fd-ink);
+    font-size: 12px;
+    font-weight: 850;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .ai-history-count {
+    display: inline-grid;
+    min-width: 22px;
+    height: 22px;
+    place-items: center;
+    border: 1px solid #b9e9df;
+    border-radius: 999px;
+    background: var(--fd-teal-soft);
+    color: var(--fd-teal);
+    font-size: 11px;
+    font-weight: 850;
+    letter-spacing: 0;
+  }
+  .ai-history-clear {
+    min-height: 28px;
+    padding: 4px 9px;
+    border: 1px solid #f2c7bd;
+    border-radius: 6px;
+    background: #fffafa;
+    color: var(--fd-coral);
+    cursor: pointer;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .ai-history-clear:hover { background: var(--fd-coral-soft); }
+  .ai-history-list {
+    list-style: none;
+    max-height: 118px;
+    overflow-y: auto;
+    padding: 0 12px 12px;
+    scrollbar-width: thin;
+    scrollbar-color: #c5d1dc transparent;
+  }
+  .ai-history-list li {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 4px 7px;
+    padding: 8px;
+    border: 1px solid transparent;
+    border-radius: 6px;
+    background: rgba(255,255,255,.66);
+    cursor: pointer;
+    transition: background .15s, border-color .15s;
+  }
+  .ai-history-list li + li { margin-top: 5px; }
+  .ai-history-list li:hover {
+    background: var(--fd-surface-tint);
+    border-color: #cfe5df;
+  }
+  .ai-history-list .ai-history-question {
+    color: var(--fd-ink);
+    font-size: 12px;
+    font-weight: 800;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ai-history-list .ai-history-meta {
+    grid-column: 1 / -1;
+    color: var(--fd-muted);
+    font-size: 11px;
+    line-height: 1.35;
+  }
+  .ai-history-list .ai-history-preview {
+    grid-column: 1 / -1;
+    color: var(--fd-muted);
+    display: -webkit-box;
+    font-size: 11px;
+    line-height: 1.4;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+  .ai-history-list .ai-history-delete {
+    width: 24px;
+    height: 24px;
+    border: 0;
+    border-radius: 5px;
+    background: transparent;
+    color: var(--fd-muted);
+    cursor: pointer;
+    line-height: 1;
+  }
+  .ai-history-list .ai-history-delete:hover {
+    background: var(--fd-coral-soft);
+    color: var(--fd-coral);
+  }
+  .ai-history-empty {
+    color: var(--fd-muted);
+    cursor: default !important;
+    font-size: 12px;
+    justify-items: center;
+    padding: 16px 8px !important;
+    text-align: center;
+    border: 1px dashed var(--fd-line) !important;
+    background: #f8fafc !important;
+  }
+  .ai-messages {
+    min-height: 0;
+    flex: 1 1 180px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    overflow-y: auto;
+    padding: 14px;
+    scrollbar-width: thin;
+    scrollbar-color: #c5d1dc transparent;
+  }
+  .ai-empty {
+    display: grid;
+    gap: 8px;
+    place-items: center;
+    min-height: 150px;
+    padding: 22px;
+    color: var(--fd-muted);
+    text-align: center;
+    border: 1px dashed var(--fd-line-strong);
+    border-radius: 8px;
+    background: linear-gradient(135deg, #f9fbff, #f2fbf8);
+  }
+  .ai-empty strong {
+    color: var(--fd-ink);
+    font-size: 17px;
+  }
+  .ai-empty span {
+    font-size: 14px;
+    line-height: 1.6;
+  }
+  .ai-message {
+    display: grid;
+    gap: 5px;
+  }
+  .ai-message .ai-role {
+    color: var(--fd-muted);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .ai-bubble {
+    padding: 10px 11px;
+    border: 1px solid var(--fd-line);
+    border-radius: 8px;
+    background: #fff;
+    color: var(--fd-text);
+    font-size: 13px;
+    line-height: 1.65;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+  }
+  .ai-message.user {
+    justify-items: end;
+  }
+  .ai-message.user .ai-role {
+    color: var(--fd-blue);
+  }
+  .ai-message.user .ai-bubble {
+    background: var(--fd-blue-soft);
+    border-color: #cbd8ff;
+  }
+  .ai-message.assistant .ai-role {
+    color: var(--fd-teal);
+  }
+  .ai-message.error .ai-role {
+    color: var(--fd-coral);
+  }
+  .ai-message.error .ai-bubble {
+    background: var(--fd-coral-soft);
+    border-color: #f2c7bd;
+  }
+  .ai-composer {
+    flex-shrink: 0;
+    display: grid;
+    gap: 9px;
+    padding: 12px;
+    border-top: 1px solid var(--fd-line);
+    background: #fff;
+  }
+  .ai-composer textarea {
+    width: 100%;
+    min-height: 86px;
+    max-height: 126px;
+    resize: vertical;
+    padding: 10px 11px;
+    border: 1px solid var(--fd-line);
+    border-radius: 8px;
+    background: #f8fafc;
+    color: var(--fd-text);
+    font: inherit;
+    font-size: 13px;
+    line-height: 1.55;
+    outline: none;
+  }
+  .ai-composer textarea:focus {
+    border-color: var(--fd-teal);
+    box-shadow: 0 0 0 4px rgba(15,118,110,.1);
+    background: #fff;
+  }
+  .ai-composer-actions {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+  }
+  .ai-secondary,
+  .ai-primary {
+    min-height: 34px;
+    border: 1px solid var(--fd-line);
+    border-radius: 6px;
+    padding: 6px 10px;
+    cursor: pointer;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+  }
+  .ai-secondary {
+    background: #fff;
+    color: var(--fd-muted);
+  }
+  .ai-secondary:hover {
+    background: #f8fafc;
+    color: var(--fd-ink);
+  }
+  .ai-primary {
+    background: var(--fd-teal);
+    border-color: var(--fd-teal);
+    color: #fff;
+  }
+  .ai-primary:hover {
+    background: #0b5f59;
+  }
+  .ai-primary:disabled,
+  .ai-secondary:disabled,
+  .ai-chip:disabled {
+    opacity: .58;
+    cursor: wait;
+    transform: none;
+  }
+
+  @media (max-width: 1280px) {
+    .app-container {
+      grid-template-columns: 340px minmax(0, 1fr) 320px;
+      padding-left: 4px;
+    }
+    .ai-panel { width: 340px; }
+    .sidebar { width: 320px; }
+  }
+  @media (max-width: 1180px) {
+    .app-container {
+      display: flex;
+      flex-direction: column;
+      padding-left: 24px;
+    }
+    .ai-panel {
+      position: static;
+      width: 100%;
+      height: auto;
+      min-height: 0;
+      max-height: none;
+      order: 1;
+    }
+    .ai-panel-header {
+      min-height: 132px;
+    }
+    .main-area { order: 2; }
+    .sidebar { order: 3; }
+    .ai-messages {
+      max-height: 320px;
+      min-height: 180px;
+    }
+  }
+  @media (max-width: 720px) {
+    .ai-panel-header,
+    .ai-messages,
+    .ai-composer,
+    .ai-quick-actions,
+    .ai-history-header,
+    .ai-history-list {
+      padding-inline: 10px;
+    }
+    .ai-composer-actions {
+      grid-template-columns: 1fr 1fr;
+    }
+    .ai-primary {
+      grid-column: 1 / -1;
+    }
+  }
 </style>
 <script src="https://cdn.jsdelivr.net/npm/tesseract.js@5/dist/tesseract.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/mammoth@1.6.0/mammoth.browser.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script></head>
 <body>
   <header class="app-header">
-    <h1>📖 英语阅读助手 <span>DeepSeek</span></h1>
+    <h1>📖 英语阅读工作台 <span>DeepSeek</span></h1>
     <div class="mode-tabs">
-      <button class="mode-tab active" data-mode="en-read">📖 英文阅读</button>
-      <button class="mode-tab" data-mode="zh-en">🌐 中译英</button>
+      <button class="mode-tab active" data-mode="en-read">英文阅读</button>
+      <button class="mode-tab" data-mode="zh-en">中译英</button>
     </div>
     <div class="config-bar">
       <label for="apiKey">API Key:</label>
@@ -544,12 +1650,47 @@
     </div>
   </header>
   <div class="app-container">
+    <aside class="ai-panel" aria-label="AI 提问回答窗口">
+      <div class="ai-panel-header">
+        <div class="ai-panel-kicker">AI Tutor</div>
+        <div class="ai-panel-title">阅读提问助手</div>
+        <div class="ai-panel-subtitle">基于当前文章、选中文本或你的问题进行解释、总结和练习。</div>
+      </div>
+      <div class="ai-quick-actions">
+        <button class="ai-chip" type="button" data-ai-prompt="请总结当前文章的核心内容，并用中文列出3个要点。">总结当前文章</button>
+        <button class="ai-chip" type="button" data-ai-prompt="请从当前文章中找出值得学习的英文表达或生词，给出中文解释和例句。">提炼生词表达</button>
+        <button class="ai-chip" type="button" data-ai-prompt="Please create 4 English reading comprehension multiple-choice questions based on the current article. The difficulty should be around CET-4 level. Each question must have four options: A, B, C, and D. Write the questions and options in English only. Put all answers together at the end under a separate section titled 'Answers'. In the Answers section, include the correct option for each question and a concise Chinese explanation.">生成阅读练习</button>
+      </div>
+      <div class="ai-history-section">
+        <div class="ai-history-header">
+          <div class="ai-history-title">AI 历史 <span class="ai-history-count" id="aiHistoryCount">0</span></div>
+          <button class="ai-history-clear" id="aiClearHistoryBtn" type="button">清空</button>
+        </div>
+        <ul class="ai-history-list" id="aiHistoryList">
+          <li class="ai-history-empty">还没有 AI 问答记录</li>
+        </ul>
+      </div>
+      <div class="ai-messages" id="aiMessages">
+        <div class="ai-empty">
+          <strong>问任何和文章有关的问题</strong>
+          <span>例如：这段话什么意思？作者观点是什么？这个句子语法怎么拆？</span>
+        </div>
+      </div>
+      <div class="ai-composer">
+        <textarea id="aiQuestion" placeholder="输入你的问题，Ctrl + Enter 发送…"></textarea>
+        <div class="ai-composer-actions">
+          <button class="ai-secondary" id="aiUseSelectionBtn" type="button">引用选中</button>
+          <button class="ai-secondary" id="aiClearBtn" type="button">清空</button>
+          <button class="ai-primary" id="aiAskBtn" type="button">发送提问</button>
+        </div>
+      </div>
+    </aside>
     <div class="main-area">
     <div class="mode-panel active" id="panel-en-read">
       <div class="upload-zone" id="uploadZone">
         <div class="icon">📂</div>
-        <div class="text">拖拽 <strong>图片</strong>、<strong>TXT</strong>、<strong>DOCX</strong>、<strong>PDF</strong> 到此处，或点击选择文件</div>
-        <div class="formats">也支持 Ctrl+V 直接粘贴截图</div>
+        <div class="text">导入图片、TXT、DOCX 或 PDF，自动进入阅读画布</div>
+        <div class="formats">支持拖拽、点击选择文件，也可以 Ctrl+V 直接粘贴截图</div>
         <div class="progress" id="uploadProgress">
           <div class="progress-bar"><div class="progress-bar-fill" id="progressFill"></div></div>
           <div class="progress-text" id="progressText">处理中…</div>
@@ -559,43 +1700,43 @@
       <div class="paste-area">
         <textarea id="articleInput" placeholder="在此粘贴英文文章…"></textarea>
         <div class="hint">
-          <span>💡 点击单词查释义 · 双击任意单词翻译整句 · 选中段落自动翻译</span>
+          <span>点击单词查释义 · 双击任意单词翻译整句 · 选中段落自动翻译</span>
           <button class="btn" id="clearBtn">清空</button>
         </div>
       </div>
       <div class="content-area" id="contentArea">
-        <div class="empty-placeholder">👆 粘贴文章后自动渲染</div>
+        <div class="empty-placeholder">粘贴或导入英文内容后自动渲染</div>
       </div>
     </div>
     <div class="mode-panel" id="panel-zh-en">
       <div class="paste-area">
         <textarea id="zhInput" placeholder="在此粘贴中文文章…" style="background:#fff8f0;border-color:#f0dcc0;"></textarea>
         <div class="hint">
-          <span>🌐 双击词语查英文 · 三击词语翻译整句 · 选中段落自动翻译</span>
+          <span>双击词语查英文 · 三击词语翻译整句 · 选中段落自动翻译</span>
           <button class="btn" id="clearZhBtn">清空</button>
         </div>
       </div>
       <div class="content-area" id="zhContentArea">
-        <div class="empty-placeholder">👆 粘贴中文文章后自动渲染</div>
+        <div class="empty-placeholder">粘贴中文内容后自动渲染</div>
       </div>
     </div>
     </div>  <!-- main-area -->
     <aside class="sidebar">
       <section class="sidebar-section">
-        <h2>📚 生词本 <span class="count" id="wordbookCount">0</span></h2>
+        <h2>生词本 <span class="count" id="wordbookCount">0</span></h2>
         <div class="wordbook-actions">
-          <button class="btn" id="exportTxtBtn">📄 导出 TXT</button>
-          <button class="btn" id="exportCsvBtn">📊 导出 CSV</button>
-          <button class="btn danger" id="clearWordbookBtn">🗑️ 清空</button>
+          <button class="btn" id="exportTxtBtn">导出 TXT</button>
+          <button class="btn" id="exportCsvBtn">导出 CSV</button>
+          <button class="btn danger" id="clearWordbookBtn">清空</button>
         </div>
         <ul class="word-list" id="wordList">
           <li class="empty-wordbook">还没有收藏单词</li>
         </ul>
       </section>
       <section class="sidebar-section">
-        <h2>🕘 历史记录 <span class="count" id="historyCount">0</span></h2>
+        <h2>历史记录 <span class="count" id="historyCount">0</span></h2>
         <div class="history-actions">
-          <button class="btn danger" id="clearHistoryBtn">🗑️ 清空历史</button>
+          <button class="btn danger" id="clearHistoryBtn">清空历史</button>
         </div>
         <ul class="history-list" id="historyList">
           <li class="empty-history">还没有阅读历史</li>
@@ -633,6 +1774,253 @@ function showToast(msg) {
   el.textContent = msg;
   container.appendChild(el);
   setTimeout(() => el.remove(), 2800);
+}
+
+function speakText(text, lang) {
+  const phrase = (text || '').trim();
+  if (!phrase) return;
+  if (!('speechSynthesis' in window) || typeof SpeechSynthesisUtterance === 'undefined') {
+    showToast('当前浏览器不支持朗读');
+    return;
+  }
+  window.speechSynthesis.cancel();
+  const utterance = new SpeechSynthesisUtterance(phrase);
+  utterance.lang = lang || 'en-US';
+  window.speechSynthesis.speak(utterance);
+}
+
+function bindSpeakButton(buttonId, text, lang) {
+  const btn = tooltip.querySelector('#' + buttonId);
+  if (!btn) return;
+  btn.addEventListener('click', function(ev) {
+    ev.stopPropagation();
+    speakText(text, lang || 'en-US');
+  });
+}
+
+function getActiveReadingText() {
+  const input = currentMode === 'zh-en' ? $('zhInput') : $('articleInput');
+  return input ? input.value.trim() : '';
+}
+
+let lastReadingSelection = '';
+
+function rememberReadingSelection(text) {
+  const value = (text || '').trim();
+  if (value) lastReadingSelection = value;
+}
+
+function getTextareaSelectionText(el) {
+  if (!el || typeof el.selectionStart !== 'number' || typeof el.selectionEnd !== 'number') return '';
+  if (el.selectionStart === el.selectionEnd) return '';
+  return el.value.slice(el.selectionStart, el.selectionEnd).trim();
+}
+
+function getSelectedReadingText() {
+  const active = document.activeElement;
+  if (active && (active.id === 'articleInput' || active.id === 'zhInput')) {
+    const selectedInInput = getTextareaSelectionText(active);
+    if (selectedInInput) {
+      rememberReadingSelection(selectedInInput);
+      return selectedInInput;
+    }
+  }
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return lastReadingSelection;
+  const text = sel.toString().trim();
+  if (!text) return lastReadingSelection;
+  const inZhArea = nodeInside(sel.anchorNode, '#zhContentArea') || nodeInside(sel.focusNode, '#zhContentArea');
+  const inEnArea = nodeInside(sel.anchorNode, '#contentArea') || nodeInside(sel.focusNode, '#contentArea');
+  const isReadingSelection = inZhArea || inEnArea;
+  if (isReadingSelection) {
+    rememberReadingSelection(text);
+    return text;
+  }
+  return lastReadingSelection;
+}
+
+function captureReadingSelection() {
+  const active = document.activeElement;
+  if (active && (active.id === 'articleInput' || active.id === 'zhInput')) {
+    const text = getTextareaSelectionText(active);
+    rememberReadingSelection(text);
+    return;
+  }
+  const sel = window.getSelection();
+  if (!sel || sel.rangeCount === 0) return;
+  const text = sel.toString().trim();
+  if (!text) return;
+  const inZhArea = nodeInside(sel.anchorNode, '#zhContentArea') || nodeInside(sel.focusNode, '#zhContentArea');
+  const inEnArea = nodeInside(sel.anchorNode, '#contentArea') || nodeInside(sel.focusNode, '#contentArea');
+  if (inZhArea || inEnArea) rememberReadingSelection(text);
+}
+
+function clearAiEmptyState() {
+  const wrap = $('aiMessages');
+  const empty = wrap && wrap.querySelector('.ai-empty');
+  if (empty) empty.remove();
+}
+
+function addAiMessage(role, text) {
+  const wrap = $('aiMessages');
+  if (!wrap) return null;
+  clearAiEmptyState();
+  const item = document.createElement('div');
+  item.className = 'ai-message ' + role;
+  const label = document.createElement('div');
+  label.className = 'ai-role';
+  label.textContent = role === 'user' ? 'You' : role === 'error' ? 'Error' : 'AI';
+  const bubble = document.createElement('div');
+  bubble.className = 'ai-bubble';
+  bubble.textContent = text;
+  item.appendChild(label);
+  item.appendChild(bubble);
+  wrap.appendChild(item);
+  wrap.scrollTop = wrap.scrollHeight;
+  return item;
+}
+
+function getAiHistory() {
+  try { return JSON.parse(localStorage.getItem('ai_tutor_history') || '[]'); } catch(e) { return []; }
+}
+
+function saveAiHistory(list) {
+  localStorage.setItem('ai_tutor_history', JSON.stringify(list.slice(0, 30)));
+}
+
+function getAiHistoryTitle(question) {
+  return (question || 'AI 问答').replace(/\s+/g, ' ').trim().slice(0, 34) || 'AI 问答';
+}
+
+function addAiHistoryItem(question, answer) {
+  const q = (question || '').trim();
+  const a = (answer || '').trim();
+  if (!q || !a) return;
+  const now = Date.now();
+  const item = {
+    id: 'ai_' + now + '_' + Math.random().toString(36).slice(2, 8),
+    question: q,
+    answer: a,
+    mode: currentMode,
+    created: now
+  };
+  const list = getAiHistory();
+  list.unshift(item);
+  saveAiHistory(list);
+  renderAiHistory();
+}
+
+function loadAiHistoryItem(id) {
+  const item = getAiHistory().find(function(entry) { return entry.id === id; });
+  if (!item) return;
+  $('aiMessages').innerHTML = '';
+  addAiMessage('user', item.question);
+  addAiMessage('assistant', item.answer);
+  $('aiQuestion').value = item.question;
+  showToast('已打开 AI 历史记录');
+}
+
+function removeAiHistoryItem(id) {
+  saveAiHistory(getAiHistory().filter(function(entry) { return entry.id !== id; }));
+  renderAiHistory();
+}
+
+function clearAiHistory() {
+  if (!confirm('确定清空所有 AI 问答历史吗？')) return;
+  saveAiHistory([]);
+  renderAiHistory();
+  showToast('AI 历史已清空');
+}
+
+function renderAiHistory() {
+  const list = getAiHistory();
+  const ul = $('aiHistoryList');
+  const count = $('aiHistoryCount');
+  if (!ul || !count) return;
+  count.textContent = list.length;
+  if (list.length === 0) {
+    ul.innerHTML = '<li class="ai-history-empty">还没有 AI 问答记录</li>';
+    return;
+  }
+  var html = '';
+  for (var i = 0; i < list.length; i++) {
+    var item = list[i];
+    var modeLabel = item.mode === 'zh-en' ? '中译英' : '英文阅读';
+    var preview = (item.answer || '').replace(/\s+/g, ' ').trim().slice(0, 86);
+    html += '<li data-id="' + escapeHtml(item.id) + '">' +
+      '<div class="ai-history-question">' + escapeHtml(getAiHistoryTitle(item.question)) + '</div>' +
+      '<button class="ai-history-delete" data-id="' + escapeHtml(item.id) + '" title="删除" type="button">×</button>' +
+      '<div class="ai-history-meta">' + modeLabel + ' · ' + formatHistoryTime(item.created) + '</div>' +
+      '<div class="ai-history-preview">' + escapeHtml(preview) + '</div>' +
+      '</li>';
+  }
+  ul.innerHTML = html;
+  ul.querySelectorAll('.ai-history-delete').forEach(function(btn) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      removeAiHistoryItem(btn.dataset.id);
+      showToast('已删除 AI 历史');
+    });
+  });
+  ul.querySelectorAll('li[data-id]').forEach(function(li) {
+    li.addEventListener('click', function(e) {
+      if (e.target.closest('.ai-history-delete')) return;
+      loadAiHistoryItem(li.dataset.id);
+    });
+  });
+}
+
+function setAiBusy(isBusy) {
+  ['aiAskBtn', 'aiUseSelectionBtn', 'aiClearBtn'].forEach(function(id) {
+    const el = $(id);
+    if (el) el.disabled = isBusy;
+  });
+  document.querySelectorAll('.ai-chip').forEach(function(btn) { btn.disabled = isBusy; });
+  const askBtn = $('aiAskBtn');
+  if (askBtn) askBtn.textContent = isBusy ? '思考中...' : '发送提问';
+}
+
+async function askAiTutor(question) {
+  const q = (question || '').trim();
+  if (!q) {
+    showToast('先输入一个问题');
+    return;
+  }
+  const article = getActiveReadingText();
+  const selected = getSelectedReadingText();
+  addAiMessage('user', q);
+  const loading = addAiMessage('assistant', '正在结合当前阅读内容思考...');
+  setAiBusy(true);
+  try {
+    const contextParts = [];
+    contextParts.push('当前模式：' + (currentMode === 'zh-en' ? '中译英' : '英文阅读'));
+    if (selected) contextParts.push('用户当前选中的文本：\n' + selected.slice(0, 1800));
+    if (article) contextParts.push('当前文章内容：\n' + article.slice(0, 6000));
+    const systemPrompt = [
+      '你是一个英语阅读和中英翻译学习助手。',
+      '请基于用户的问题和给定上下文回答。',
+      '回答使用中文为主；涉及英文表达、语法、例句时保留英文。',
+      '回答要清晰、可执行、适合学习者，不要编造文章里没有的信息。',
+      '如果缺少文章上下文，请直接根据用户问题回答，并提示可以粘贴文章获得更精确帮助。'
+    ].join('\n');
+    const userPrompt = contextParts.join('\n\n') + '\n\n用户问题：\n' + q;
+    const answer = await callDeepSeek([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt }
+    ]);
+    if (loading) {
+      loading.querySelector('.ai-bubble').textContent = answer;
+      $('aiMessages').scrollTop = $('aiMessages').scrollHeight;
+    }
+    addAiHistoryItem(q, answer);
+    const input = $('aiQuestion');
+    if (input && input.value.trim() === q) input.value = '';
+  } catch (err) {
+    if (loading) loading.remove();
+    addAiMessage('error', err.message || 'AI 请求失败');
+  } finally {
+    setAiBusy(false);
+  }
 }
 
 function getApiKey() { const k = $('apiKey').value.trim(); return k || null; }
@@ -839,7 +2227,13 @@ function renderWordbook() {
       showTooltip('<div class="loading-spinner">查询 ' + escapeHtml(word) + ' 中...</div>', r.left, r.bottom);
       try {
         var result = await lookupWord(word);
-        showTooltip('<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic) + '</span></div><div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>', r.left, r.bottom);
+        showTooltip(
+          '<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic) + '</span></div>' +
+          '<div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>' +
+          '<div class="actions"><button class="btn" id="wordbookSpeakBtn" type="button">🔊 朗读</button></div>',
+          r.left, r.bottom
+        );
+        bindSpeakButton('wordbookSpeakBtn', word, 'en-US');
       } catch (err) { showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', r.left, r.bottom); }
     });
   });
@@ -1002,9 +2396,9 @@ document.querySelectorAll('.mode-tab').forEach(tab => {
     if (panel) panel.classList.add('active');
     const header = document.querySelector('.app-header h1');
     if (mode === 'en-read') {
-      header.innerHTML = '📖 英语阅读助手 <span>DeepSeek</span>';
+      header.innerHTML = '📖 英语阅读工作台 <span>DeepSeek</span>';
     } else {
-      header.innerHTML = '🌐 中译英 <span>DeepSeek</span>';
+      header.innerHTML = '🌐 中译英工作台 <span>DeepSeek</span>';
     }
     currentMode = mode;
     if (!isLoadingHistory) activeHistoryId = null;
@@ -1031,6 +2425,7 @@ $('contentArea').addEventListener('click', async (e) => {
   if (!raw) return;
   const word = raw.replace(/^[^a-zA-Z0-9']+|[^a-zA-Z0-9']+$/g, '').toLowerCase();
   if (!word) return;
+  rememberReadingSelection(word);
   e.stopPropagation();
   if (wordClickTimer) clearTimeout(wordClickTimer);
   wordClickTimer = setTimeout(async () => {
@@ -1043,10 +2438,11 @@ $('contentArea').addEventListener('click', async (e) => {
     showTooltip(
       '<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic) + '</span></div>' +
       '<div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>' +
-      '<div class="actions"><button class="btn primary" id="saveWordBtn" data-word="' + escapeHtml(word) + '" data-meaning="' + escapeHtml(result.meaning) + '">' + (isSaved ? '✅ 已收藏' : '📌 收藏') + '</button></div>',
+      '<div class="actions"><button class="btn primary" id="saveWordBtn" data-word="' + escapeHtml(word) + '" data-meaning="' + escapeHtml(result.meaning) + '">' + (isSaved ? '✅ 已收藏' : '📌 收藏') + '</button><button class="btn" id="speakWordBtn" type="button">🔊 朗读</button></div>',
       rect.left, rect.bottom
     );
     wordSpan.classList.add('cached');
+    bindSpeakButton('speakWordBtn', word, 'en-US');
     const saveBtn = tooltip.querySelector('#saveWordBtn');
     if (saveBtn) {
       saveBtn.addEventListener('click', (ev) => {
@@ -1117,9 +2513,10 @@ async function showZhWordLookup(word, rect) {
       showTooltip(
         '<div class="word-header"><span class="word-text">' + escapeHtml(word) + '</span><span class="phonetic">' + escapeHtml(result.phonetic) + '</span></div>' +
         '<div class="meaning">' + escapeHtml(result.meaning).replace(/\n/g, '<br>') + '</div>' +
-        '<div class="actions"><button class="btn primary" id="zhSaveBtn" data-word="' + escapeHtml(word) + '" data-meaning="' + escapeHtml(result.meaning) + '">' + (isSaved ? '✅ 已收藏' : '📌 收藏') + '</button></div>',
+        '<div class="actions"><button class="btn primary" id="zhSaveBtn" data-word="' + escapeHtml(word) + '" data-meaning="' + escapeHtml(result.meaning) + '">' + (isSaved ? '✅ 已收藏' : '📌 收藏') + '</button><button class="btn" id="zhSpeakWordBtn" type="button">🔊 朗读</button></div>',
         rect.left, rect.bottom
       );
+      bindSpeakButton('zhSpeakWordBtn', word, 'en-US');
       const saveBtn = tooltip.querySelector('#zhSaveBtn');
       if (saveBtn) {
         saveBtn.addEventListener('click', function(ev) {
@@ -1156,6 +2553,7 @@ $('zhContentArea').addEventListener('click', async (e) => {
   if (!raw) return;
   const word = raw.trim();
   if (!word) return;
+  rememberReadingSelection(word);
   e.stopPropagation();
   if (wordClickTimer) clearTimeout(wordClickTimer);
   wordClickTimer = setTimeout(async () => {
@@ -1183,6 +2581,7 @@ $('zhContentArea').addEventListener('dblclick', async (e) => {
     const raw = selected || (wordSpan && wordSpan.dataset.word) || '';
     const word = raw.replace(/^[\s，。！？、；：“”‘’（）《》【】]+|[\s，。！？、；：“”‘’（）《》【】]+$/g, '').trim();
     if (!word) return;
+    rememberReadingSelection(word);
     const rect = wordSpan ? wordSpan.getBoundingClientRect() : getEventRect(e, closestElement(e.target, '.sentence') || $('zhContentArea'));
     await showZhWordLookup(word, rect);
     if (wordSpan) wordSpan.classList.add('cached');
@@ -1203,6 +2602,7 @@ $('zhContentArea').addEventListener('click', async (e) => {
 // Selection translation (shared by EN and ZH)
 let selectionTimeout = null;
 document.addEventListener('mouseup', (e) => {
+  captureReadingSelection();
   if (tooltip.contains(e.target) || overlay.contains(e.target)) return;
   if (e.target.closest('textarea')) return;
   if (selectionTimeout) clearTimeout(selectionTimeout);
@@ -1210,8 +2610,10 @@ document.addEventListener('mouseup', (e) => {
     const sel = window.getSelection();
     const text = sel.toString().trim();
     if (!text) return;
-    const inZhArea = sel.anchorNode && sel.anchorNode.closest && sel.anchorNode.closest('#zhContentArea');
-    if (!sel.anchorNode || !sel.anchorNode.closest || (!sel.anchorNode.closest('#contentArea') && !inZhArea)) return;
+    const inZhArea = nodeInside(sel.anchorNode, '#zhContentArea') || nodeInside(sel.focusNode, '#zhContentArea');
+    const inEnArea = nodeInside(sel.anchorNode, '#contentArea') || nodeInside(sel.focusNode, '#contentArea');
+    if (!inEnArea && !inZhArea) return;
+    rememberReadingSelection(text);
     const wordCount = text.split(/\s+/).length;
     if (wordCount < 2) return;
     const range = sel.getRangeAt(0);
@@ -1230,15 +2632,29 @@ document.addEventListener('mouseup', (e) => {
         translation = await translateText(text);
       }
       const displayText = text.length > 90 ? text.slice(0, 90) + '\u2026' : text;
+      var actionsHtml = inZhArea ? '' : '<div class="actions"><button class="btn" id="selectionSpeakBtn" type="button">🔊 朗读英文</button></div>';
       showTooltip(
-        '<div class="translation-block"><div class="src-text">' + (inZhArea ? '🌐 ' : '📝 ') + escapeHtml(displayText) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>',
+        '<div class="translation-block"><div class="src-text">' + (inZhArea ? '🌐 ' : '📝 ') + escapeHtml(displayText) + '</div><div class="tgt-text">' + escapeHtml(translation) + '</div></div>' + actionsHtml,
         rect.left, rect.bottom + 8
       );
+      if (!inZhArea) bindSpeakButton('selectionSpeakBtn', text, 'en-US');
     } catch (err) {
       const rect2 = range.getBoundingClientRect();
       showTooltip('<div class="error-msg">❌ ' + escapeHtml(err.message) + '</div>', rect2.left, rect2.bottom + 8);
     }
   }, 300);
+});
+
+document.addEventListener('selectionchange', function() {
+  captureReadingSelection();
+});
+
+['articleInput', 'zhInput'].forEach(function(id) {
+  const el = $(id);
+  if (!el) return;
+  ['select', 'keyup', 'mouseup'].forEach(function(evt) {
+    el.addEventListener(evt, captureReadingSelection);
+  });
 });
 
 // ---- File Upload & OCR ----
@@ -1407,10 +2823,43 @@ $('apiKey').addEventListener('input', function() {
 });
 
 // ---- Init ----
+$('aiAskBtn').addEventListener('click', function() {
+  askAiTutor($('aiQuestion').value);
+});
+$('aiQuestion').addEventListener('keydown', function(e) {
+  if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+    e.preventDefault();
+    askAiTutor($('aiQuestion').value);
+  }
+});
+$('aiUseSelectionBtn').addEventListener('click', function() {
+  const selected = getSelectedReadingText();
+  if (!selected) {
+    showToast('请先在阅读画布或输入框中选中一段文字');
+    return;
+  }
+  const input = $('aiQuestion');
+  const prefix = input.value.trim() ? '\n\n引用：' : '请解释这段文字：\n';
+  input.value += prefix + selected;
+  input.focus();
+});
+$('aiClearBtn').addEventListener('click', function() {
+  $('aiMessages').innerHTML = '<div class="ai-empty"><strong>问任何和文章有关的问题</strong><span>例如：这段话什么意思？作者观点是什么？这个句子语法怎么拆？</span></div>';
+  $('aiQuestion').value = '';
+});
+$('aiClearHistoryBtn').addEventListener('click', clearAiHistory);
+document.querySelectorAll('.ai-chip').forEach(function(btn) {
+  btn.addEventListener('click', function() {
+    const prompt = btn.dataset.aiPrompt || btn.textContent;
+    $('aiQuestion').value = prompt;
+    askAiTutor(prompt);
+  });
+});
 $('exportTxtBtn').addEventListener('click', exportTxt);
 $('exportCsvBtn').addEventListener('click', exportCsv);
 $('clearWordbookBtn').addEventListener('click', wordbookClear);
 $('clearHistoryBtn').addEventListener('click', clearHistory);
+renderAiHistory();
 renderWordbook();
 renderHistory();
 renderArticle('');
